@@ -29,6 +29,26 @@ npm run dev        # http://localhost:3000
 
 서버 통신은 `src/lib/api.ts`의 axios 인스턴스와 TanStack Query(`src/app/providers.tsx`)를 사용합니다.
 
+## 폴더 구조
+
+```
+src/
+  app/           # 라우트. 페이지는 얇게 두고 로직은 features로
+    page.tsx     # 랜딩 (/)
+    admin/       # 관리자 (/admin)
+    layout.tsx
+    providers.tsx
+  features/      # 도메인별 코드 (예: species/, stats/)
+    <도메인>/
+      api.ts         # axios 요청 함수
+      queries.ts     # TanStack Query 훅
+      components/    # 이 도메인에서만 쓰는 컴포넌트
+  components/    # 여러 도메인이 같이 쓰는 UI
+  lib/           # 공용 설정 (api.ts: axios 인스턴스)
+```
+
+- 한 도메인에서만 쓰면 `features/<도메인>`, 두 곳 이상에서 쓰면 `components/`로 옮깁니다.
+
 ## 작업 흐름
 
 - 브랜치 전략: `feature/*` → `develop` → `main`. 작업 브랜치는 `develop`으로 PR, 배포할 때 `develop`을 `main`으로 PR.
