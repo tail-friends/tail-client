@@ -33,24 +33,18 @@ npm run dev        # http://localhost:3000
 
 ```
 src/
-  app/                  # 라우트. 페이지는 얇게 두고 로직은 features로
-    login/              # 관리자 로그인 (/login)
-    (admin)/            # 로그인 후 화면 (공통 레이아웃)
-      page.tsx          # 운영 대시보드 (/)
-      species/          # 종 관리 (/species)
-      guides/           # 사육 가이드 편집 (/guides)
-    layout.tsx
-    providers.tsx
-  features/             # 도메인별 코드: auth, stats, species
+  app/            # 라우트. 페이지는 얇게 두고 로직은 features로
+  features/       # 도메인별 코드
     <도메인>/
-      api.ts            # axios 요청 함수
-      queries.ts        # TanStack Query 훅
-      components/       # 이 도메인에서만 쓰는 컴포넌트
-  components/           # 여러 도메인이 같이 쓰는 UI
-  lib/                  # 공용 설정 (api.ts: axios 인스턴스)
+      api.ts      # axios 요청 함수
+      queries.ts  # TanStack Query 훅
+      components/ # 이 도메인에서만 쓰는 컴포넌트
+  components/     # 여러 도메인이 같이 쓰는 UI
+  lib/            # 공용 설정 (api.ts: axios 인스턴스)
 ```
 
 - 한 도메인에서만 쓰면 `features/<도메인>`, 두 곳 이상에서 쓰면 `components/`로 옮깁니다.
+- 페이지 경로는 디자인이 나오면 잡습니다.
 
 ## 작업 흐름
 
