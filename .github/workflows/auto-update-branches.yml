@@ -1,0 +1,39 @@
+name: Auto-update PR branches
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: auto-update-${{ github.ref }}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update PR branches behind ${{ github.ref_name }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          for pr in $(gh pr list --repo "$REPO" --base "$BASE" --state open --json number --jq '.[].number'); do
+            read -r head branch < <(gh pr view "$pr" --repo "$REPO" --json headRefOid,headRefName --jq '"\(.headRefOid) \(.headRefName)"')
+            echo "Updating PR #$pr ($branch) against $BASE"
+            if ! gh api --method PUT "repos/$REPO/pulls/$pr/update-branch" -f expected_head_sha="$head"; then
+              echo "Skip PR #$pr (already up to date or conflict)"
+              continue
+            fi
+            # update-branch is async; wait for the new head before dispatching CI
+            for i in $(seq 1 15); do
+              [ "$(gh pr view "$pr" --repo "$REPO" --json headRefOid --jq .headRefOid)" != "$head" ] && break
+              sleep 2
+            done
+            # pushes made with GITHUB_TOKEN don't trigger CI, so start it explicitly
+            gh workflow run ci.yml --repo "$REPO" --ref "$branch"
+          done
