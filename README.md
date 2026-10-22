@@ -33,4 +33,3 @@ npm run dev        # http://localhost:3000
 - `main`에 직접 푸시 금지. 브랜치 → PR → CI 통과 시 승인 없이 머지 (squash).
 - CI: `.github/workflows/ci.yml` (lint, typecheck, build). 필수 체크는 `Build`.
 - main이 갱신되면 열린 PR 브랜치를 자동으로 업데이트하고 CI를 다시 돌립니다.
-- PR이 열리면 Discord로 알림을 보냅니다 (`DISCORD_WEBHOOK_URL` 시크릿, `DISCORD_FRONTEND_MENTIONS` 변수).
