@@ -30,6 +30,7 @@ npm run dev        # http://localhost:3000
 
 ## 작업 흐름
 
-- `main`에 직접 푸시 금지. 브랜치 → PR → CI 통과 시 승인 없이 머지 (squash).
+- 브랜치 전략: `feature/*` → `develop` → `main`. 작업 브랜치는 `develop`으로 PR, 배포할 때 `develop`을 `main`으로 PR.
+- `develop`·`main`에 직접 푸시 금지. PR → CI 통과 시 승인 없이 머지.
 - CI: `.github/workflows/ci.yml` (lint, typecheck, build). 필수 체크는 `Build`.
-- main이 갱신되면 열린 PR 브랜치를 자동으로 업데이트하고 CI를 다시 돌립니다.
+- `develop`·`main`이 갱신되면 열린 PR 브랜치를 자동으로 업데이트하고 CI를 다시 돌립니다.
