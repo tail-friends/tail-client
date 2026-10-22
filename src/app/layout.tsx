@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "꼬리친구",
+  title: "꼬리친구 관리자",
   description: "내 파충류의 급여·탈피·체중 기록을 캐릭터와 함께.",
 };
 
