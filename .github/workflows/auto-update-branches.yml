@@ -29,11 +29,16 @@ jobs:
               echo "Skip PR #$pr (already up to date or conflict)"
               continue
             fi
-            # update-branch is async; wait for the new head before dispatching CI
-            for i in $(seq 1 15); do
-              [ "$(gh pr view "$pr" --repo "$REPO" --json headRefOid --jq .headRefOid)" != "$head" ] && break
+            # 봇 커밋으로 생긴 PR CI는 "첫 기여자 승인 대기"로 멈춘다. 새 커밋의 실행을 찾아 승인한다
+            for i in $(seq 1 30); do
+              new=$(gh pr view "$pr" --repo "$REPO" --json headRefOid --jq .headRefOid)
+              run=$(gh run list --repo "$REPO" --branch "$branch" --event pull_request \
+                --json databaseId,headSha,conclusion \
+                --jq "map(select(.headSha == \"$new\" and .conclusion == \"action_required\"))[0].databaseId // empty")
+              if [ -n "$run" ]; then
+                gh api --method POST "repos/$REPO/actions/runs/$run/approve" && echo "Approved CI run $run for PR #$pr"
+                break
+              fi
               sleep 2
             done
-            # pushes made with GITHUB_TOKEN don't trigger CI, so start it explicitly
-            gh workflow run ci.yml --repo "$REPO" --ref "$branch"
           done
