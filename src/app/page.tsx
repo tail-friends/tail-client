@@ -22,7 +22,7 @@ async function Dashboard({
   const failed = (await searchParams).error === "failed";
 
   return (
-    <div className="flex h-screen gap-4 p-4">
+    <div className="flex min-h-screen gap-4 p-4">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <TopBar title="대시보드" />

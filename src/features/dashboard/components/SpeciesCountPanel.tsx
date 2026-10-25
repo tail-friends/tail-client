@@ -5,7 +5,7 @@ export default function SpeciesCountPanel() {
   const max = Math.max(...speciesCounts.map(({ count }) => count));
 
   return (
-    <section className="glass flex w-90 shrink-0 flex-col rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-5.5 py-5">
+    <section className="glass flex w-90 shrink-0 flex-col rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-5.25 py-4.75">
       <h2 className="text-title-md mb-2.5">종별 등록 개체 수</h2>
       {speciesCounts.map(({ name, count }) => (
         <div key={name} className="flex flex-col gap-1.25 py-1.75">
