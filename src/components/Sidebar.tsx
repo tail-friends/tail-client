@@ -1,0 +1,47 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Brand from "./Brand";
+
+const menus = [
+  { href: "/", label: "대시보드", icon: "home" },
+  { href: "/species", label: "종 관리", icon: "egg" },
+  { href: "/guides", label: "사육 가이드", icon: "record" },
+];
+
+// Figma Admin/Sidebar
+export default function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <nav className="glass flex w-[232px] shrink-0 flex-col gap-1.5 rounded-xl bg-linear-105 from-white/16 to-white/8 px-4 py-6">
+      <Brand size="sm" />
+      <p className="text-caption text-fg-tertiary mt-6">메뉴</p>
+      {menus.map(({ href, label, icon }) => {
+        const active = pathname === href;
+        return (
+          <Link
+            key={href}
+            href={href}
+            aria-current={active ? "page" : undefined}
+            className={`text-body flex items-center gap-2.5 rounded-md px-3 py-[11px] ${active ? "bg-primary text-white" : "text-fg-secondary"}`}
+          >
+            {/* 아이콘을 글자색으로 칠하려고 SVG를 마스크로 쓴다 */}
+            <span
+              aria-hidden
+              className={`size-[18px] ${active ? "bg-white" : "bg-fg"}`}
+              style={{
+                mask: `url(/icons/${icon}.svg) center / contain no-repeat`,
+              }}
+            />
+            {label}
+          </Link>
+        );
+      })}
+      <p className="text-caption text-fg-tertiary mt-auto">
+        1차 출시 · 관리자 웹 v1.0
+      </p>
+    </nav>
+  );
+}
