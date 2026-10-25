@@ -15,7 +15,7 @@ export default function Sidebar({ activeHref }: { activeHref?: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className="glass flex w-[232px] shrink-0 flex-col gap-1.5 rounded-xl px-4 py-6">
+    <nav className="glass flex w-58 shrink-0 flex-col gap-1.5 rounded-xl px-4 py-6">
       <Brand size="sm" />
       <p className="text-caption text-fg-tertiary mt-6">메뉴</p>
       {menus.map(({ href, label, icon }) => {
@@ -25,12 +25,12 @@ export default function Sidebar({ activeHref }: { activeHref?: string }) {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`text-body flex items-center gap-2.5 rounded-md px-3 py-[11px] ${active ? "bg-primary text-white" : "text-fg-secondary"}`}
+            className={`text-body flex items-center gap-2.5 rounded-md px-3 py-2.75 ${active ? "bg-primary text-white" : "text-fg-secondary"}`}
           >
             {/* 아이콘을 글자색으로 칠하려고 SVG를 마스크로 쓴다 */}
             <span
               aria-hidden
-              className={`size-[18px] ${active ? "bg-white" : "bg-fg"}`}
+              className={`size-4.5 ${active ? "bg-white" : "bg-fg"}`}
               style={{
                 mask: `url(/icons/${icon}.svg) center / contain no-repeat`,
               }}

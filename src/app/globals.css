@@ -18,35 +18,35 @@
   --color-warning: #96570c;
   --color-success: #336b41;
 
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
 
-  --text-number-lg: 28px;
-  --text-number-lg--line-height: 32px;
-  --text-number-lg--letter-spacing: -1px;
-  --text-display-lg: 24px;
-  --text-display-lg--line-height: 32px;
-  --text-display-lg--letter-spacing: -0.6px;
-  --text-display-md: 19px;
-  --text-display-md--line-height: 26px;
-  --text-display-md--letter-spacing: -0.4px;
-  --text-title-lg: 16px;
-  --text-title-lg--line-height: 22px;
-  --text-title-lg--letter-spacing: -0.3px;
-  --text-wordmark: 16px;
-  --text-wordmark--line-height: 20px;
-  --text-wordmark--letter-spacing: 6.4px;
-  --text-button: 14px;
-  --text-button--line-height: 20px;
-  --text-button--letter-spacing: -0.2px;
-  --text-body: 13px;
-  --text-body--line-height: 19px;
-  --text-body--letter-spacing: -0.1px;
-  --text-label: 12px;
-  --text-label--line-height: 16px;
-  --text-caption: 11px;
-  --text-caption--line-height: 14px;
+  --text-number-lg: 1.75rem;
+  --text-number-lg--line-height: 2rem;
+  --text-number-lg--letter-spacing: -0.0625rem;
+  --text-display-lg: 1.5rem;
+  --text-display-lg--line-height: 2rem;
+  --text-display-lg--letter-spacing: -0.0375rem;
+  --text-display-md: 1.1875rem;
+  --text-display-md--line-height: 1.625rem;
+  --text-display-md--letter-spacing: -0.025rem;
+  --text-title-lg: 1rem;
+  --text-title-lg--line-height: 1.375rem;
+  --text-title-lg--letter-spacing: -0.01875rem;
+  --text-wordmark: 1rem;
+  --text-wordmark--line-height: 1.25rem;
+  --text-wordmark--letter-spacing: 0.4rem;
+  --text-button: 0.875rem;
+  --text-button--line-height: 1.25rem;
+  --text-button--letter-spacing: -0.0125rem;
+  --text-body: 0.8125rem;
+  --text-body--line-height: 1.1875rem;
+  --text-body--letter-spacing: -0.00625rem;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 0.875rem;
 }
 
 /* 카드·사이드바·상단 바에 쓰는 반투명 유리 효과.
@@ -55,7 +55,7 @@
 @utility glass {
   position: relative;
   border: 1px solid white;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(1.125rem);
 
   &::before,
   &::after {
@@ -69,8 +69,8 @@
   &::before {
     inset: -1px;
     background: rgb(61 51 41 / 0.08);
-    filter: blur(8px);
-    transform: translateY(12px);
+    filter: blur(0.5rem);
+    transform: translateY(0.75rem);
   }
 
   &::after {
@@ -84,7 +84,13 @@
   }
 }
 
+/* 1440 화면 기준(16px)으로 화면 폭에 비례해 전체 크기를 바꾼다. 1280보다 좁으면 가로 스크롤 */
+html {
+  font-size: calc(max(100vw, 1280px) / 90);
+}
+
 body {
+  min-width: 1280px;
   background: var(--color-canvas) url("/images/admin-background.svg") center /
     cover fixed;
   color: var(--color-fg);

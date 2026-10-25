@@ -16,7 +16,7 @@ export default function LoginAlert({
   return (
     <div
       role="alert"
-      className={`flex w-full flex-col items-center gap-1.5 rounded-lg px-[18px] py-4 ${tones[tone]}`}
+      className={`flex w-full flex-col items-center gap-1.5 rounded-lg px-4.5 py-4 ${tones[tone]}`}
     >
       <p className="text-title-lg">{title}</p>
       <p className="text-body text-fg-secondary text-center whitespace-pre-line">

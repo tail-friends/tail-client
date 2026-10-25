@@ -5,12 +5,12 @@ export default function Brand({ size }: { size: "lg" | "sm" }) {
     <div className={`flex items-center gap-2 ${lg ? "" : "px-2"}`}>
       {/* 브라우저는 마지막 글자 뒤에도 자간을 붙여서, Figma처럼 그만큼 당긴다 */}
       <span
-        className={`text-primary ${lg ? "text-display-lg" : "text-wordmark -mr-[6.4px]"}`}
+        className={`text-primary ${lg ? "text-display-lg" : "text-wordmark -mr-[0.4rem]"}`}
       >
         꼬리친구
       </span>
       <span
-        className={`bg-primary-soft text-primary rounded-full px-2 py-[3px] ${lg ? "text-label" : "text-caption"}`}
+        className={`bg-primary-soft text-primary rounded-full px-2 py-0.75 ${lg ? "text-label" : "text-caption"}`}
       >
         관리자
       </span>
