@@ -85,7 +85,8 @@ export default function SpeciesTable({
         : species.map((s) => (
             <div
               key={s.name}
-              className={`border-line flex items-center border-b py-3 ${s.hidden ? "opacity-50" : ""}`}
+              onClick={() => onEdit(s)}
+              className={`border-line flex cursor-pointer items-center border-b py-3 ${s.hidden ? "opacity-50" : ""}`}
             >
               <Cell width="w-47.5">{s.name}</Cell>
               <Cell width="w-22.5">{s.feedDays}일</Cell>
@@ -104,16 +105,15 @@ export default function SpeciesTable({
                 </Chip>
               </Cell>
               <div className="text-label flex h-5 w-25 shrink-0 items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => onEdit(s)}
-                  className="text-primary cursor-pointer"
-                >
+                <button type="button" className="text-primary cursor-pointer">
                   수정
                 </button>
                 <button
                   type="button"
-                  onClick={() => onToggleHidden(s)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // 행 클릭(수정 폼)으로 번지지 않게
+                    onToggleHidden(s);
+                  }}
                   className="text-fg-tertiary cursor-pointer"
                 >
                   {s.hidden ? "다시 보이기" : "숨기기"}
