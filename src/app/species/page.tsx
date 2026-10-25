@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 import Button from "@/components/Button";
 import Sidebar from "@/components/Sidebar";
 import Toast from "@/components/Toast";
@@ -11,19 +9,11 @@ import SpeciesSearch from "@/features/species/components/SpeciesSearch";
 import SpeciesTable, {
   type Species,
 } from "@/features/species/components/SpeciesTable";
-import eulReul, { waGwa } from "@/features/species/eulReul";
 
-const base = {
-  spike: false,
-  shedDays: null,
-  hotZone: null,
-  coolZone: null,
-  humidity: null,
-  hidden: false,
-} as const;
+const base = { spike: false, hidden: false } as const;
 
 // 퍼블리싱용 고정 데이터 (Figma W-3)
-const initialSpecies: Species[] = [
+const species: Species[] = [
   { ...base, name: "레오파드 게코", feedDays: 4, shape: "gecko", home: "사막" },
   {
     ...base,
@@ -67,7 +57,6 @@ const initialSpecies: Species[] = [
     feedDays: 7,
     shape: "snake",
     home: "바위 협곡",
-    animalCount: 97,
   },
   {
     ...base,
@@ -87,108 +76,112 @@ const initialSpecies: Species[] = [
   { ...base, name: "육지 거북", feedDays: 1, shape: "turtle", home: "물가" },
 ];
 
-// Figma W-3 종 관리
-export default function SpeciesPage() {
-  const [species, setSpecies] = useState(initialSpecies);
-  const [query, setQuery] = useState("");
-  // 드로어: 없음 · 추가("add") · 수정(종 이름)
-  const [drawer, setDrawer] = useState<"add" | string | null>(null);
-  const [hiding, setHiding] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
-  const q = query.trim();
-  const shown = species.filter((s) => s.name.includes(q));
-  const editing = species.find((s) => s.name === drawer);
-  const hidingSpecies = species.find((s) => s.name === hiding);
-
-  const save = (saved: Species) => {
-    const name = editing?.name;
-    setSpecies(
-      name
-        ? species.map((s) => (s.name === name ? saved : s))
-        : [...species, saved],
-    );
-    setDrawer(null);
-    setToast(`${eulReul(saved.name)} 저장했어요 · 앱 종 목록에 반영됐어요`);
-  };
-
-  const setHidden = (name: string, hidden: boolean) => {
-    setSpecies(species.map((s) => (s.name === name ? { ...s, hidden } : s)));
-    setHiding(null);
-    setToast(
-      hidden
-        ? `${eulReul(name)} 숨겼어요 · 앱 새 등록 목록에서 빠졌어요`
-        : `${eulReul(name)} 다시 보이게 했어요`,
-    );
-  };
-
+export default function SpeciesPage({ searchParams }: PageProps<"/species">) {
   return (
     <div className="flex h-screen gap-4 p-4">
       <Sidebar />
-      <div className="flex flex-1 flex-col gap-4">
+      <Suspense>
+        <SpeciesContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+// ?view=search(W-3d) | add(W-3e) | error(W-3b) | edit(W-3a) | saved(W-3f) | failed(W-3h)
+// | hide(W-3c) | hidden(W-3g) | shown(W-3i), 없으면 W-3
+async function SpeciesContent({
+  searchParams,
+}: Pick<PageProps<"/species">, "searchParams">) {
+  const { view } = await searchParams;
+  const searching = view === "search";
+  const rows = species.map((s) => ({
+    ...s,
+    hidden:
+      s.name === "콘 스네이크"
+        ? view === "hidden"
+        : s.name === "킹 스네이크" && view !== "shown",
+  }));
+
+  return (
+    <>
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
         <TopBar title="종 관리" />
         <main className="flex flex-1 flex-col gap-4 p-2">
           <div className="flex items-center gap-3">
             <div className="flex-1">
               <h2 className="text-title-lg">
-                {q
-                  ? `종 목록 · 검색 결과 ${shown.length}종`
-                  : `종 목록 · ${species.length}종`}
+                {searching ? "종 목록 · 검색 결과 0종" : "종 목록 · 10종"}
               </h2>
               <p className="text-caption text-fg-tertiary mt-0.5">
                 저장하면 앱의 종 선택 목록에 바로 반영돼요 · 숨긴 종은 회색으로
                 남아요
               </p>
             </div>
-            <SpeciesSearch value={query} onChange={setQuery} />
-            <Button onClick={() => setDrawer("add")}>+ 종 추가</Button>
+            <SpeciesSearch value={searching ? "이구아나" : undefined} />
+            <Button>+ 종 추가</Button>
           </div>
           <SpeciesTable
-            species={shown}
-            onEdit={setDrawer}
-            onToggleHidden={(name) => {
-              const target = species.find((s) => s.name === name);
-              if (target?.hidden) setHidden(name, false);
-              else setHiding(name);
-            }}
+            species={searching ? [] : rows}
             empty={
               <div className="flex flex-1 flex-col items-center justify-center gap-2.5">
                 <p className="text-title-lg">
-                  &apos;{q}&apos;{waGwa(q)} 맞는 종이 없어요
+                  &apos;이구아나&apos;와 맞는 종이 없어요
                 </p>
                 <p className="text-body text-fg-secondary">
                   철자를 확인하거나 새 종으로 추가해 주세요.
                 </p>
-                <Button onClick={() => setDrawer("add")}>+ {q} 종 추가</Button>
+                <Button>+ 이구아나 종 추가</Button>
               </div>
             }
           />
         </main>
       </div>
-      {drawer && (
+      {view === "add" && <SpeciesDrawer title="새 종 추가" />}
+      {view === "error" && (
         <SpeciesDrawer
-          key={drawer}
-          species={editing}
-          names={species.map((s) => s.name)}
-          onSave={save}
-          onClose={() => setDrawer(null)}
+          title="새 종 추가"
+          values={{ name: "레오파드 게코", feed: "75", humidity: "120" }}
+          errors={{
+            name: "같은 이름의 종이 이미 있어요",
+            feed: "1~60일 사이로 입력해 주세요",
+            humidity: "0~100% 사이로 입력해 주세요",
+          }}
         />
       )}
-      {hidingSpecies && (
+      {(view === "edit" || view === "failed") && (
+        <SpeciesDrawer
+          title="종 수정 · 레오파드 게코"
+          values={{ name: "레오파드 게코", feed: "4" }}
+        />
+      )}
+      {view === "hide" && (
         <HideDialog
-          name={hidingSpecies.name}
-          animalCount={hidingSpecies.animalCount}
-          onConfirm={() => setHidden(hidingSpecies.name, true)}
-          onCancel={() => setHiding(null)}
+          title="콘 스네이크를 숨길까요?"
+          message={
+            "이 종을 키우는 개체 97마리는 그대로 있어요.\n앱의 새 등록 종 목록에서만 빠지고, 언제든 다시 보이게 할 수 있어요."
+          }
         />
       )}
-      {toast && <Toast position="top-[1.65625rem] left-1/2">{toast}</Toast>}
-    </div>
+      {view === "saved" && (
+        <Toast position="top-[1.65625rem] left-211">
+          레오파드 게코를 저장했어요 · 앱 종 목록에 반영됐어요
+        </Toast>
+      )}
+      {view === "failed" && (
+        <Toast position="bottom-25 left-[calc(100%-16rem)]">
+          저장하지 못했어요 · 입력한 내용은 그대로예요
+        </Toast>
+      )}
+      {view === "hidden" && (
+        <Toast position="top-[1.65625rem] left-211">
+          콘 스네이크를 숨겼어요 · 앱 새 등록 목록에서 빠졌어요
+        </Toast>
+      )}
+      {view === "shown" && (
+        <Toast position="top-[1.65625rem] left-211">
+          킹 스네이크를 다시 보이게 했어요
+        </Toast>
+      )}
+    </>
   );
 }
