@@ -69,10 +69,7 @@ export default function SpeciesTable({
     <div className="glass flex flex-1 flex-col rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-5.5 py-2">
       <div className="border-line flex items-center border-b py-3">
         {columns.map(({ label, width }, i) => (
-          <div
-            key={i}
-            className={`text-label text-fg-tertiary h-4 ${width}`}
-          >
+          <div key={i} className={`text-label text-fg-tertiary h-4 ${width}`}>
             {label}
           </div>
         ))}

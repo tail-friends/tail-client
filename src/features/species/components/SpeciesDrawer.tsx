@@ -20,7 +20,8 @@ const blank: Species = {
   hidden: false,
 };
 
-const toText = (n: number | null) => (n === null || Number.isNaN(n) ? "" : `${n}`);
+const toText = (n: number | null) =>
+  n === null || Number.isNaN(n) ? "" : `${n}`;
 const toNumber = (text: string) => (text.trim() === "" ? null : Number(text));
 const outOfRange = (n: number | null, min: number, max: number) =>
   n !== null && !(Number.isInteger(n) && n >= min && n <= max);
@@ -51,8 +52,9 @@ export default function SpeciesDrawer({
   const [home, setHome] = useState(initial.home);
   const [submitted, setSubmitted] = useState(false);
 
-  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm({ ...form, [key]: e.target.value });
+  const set =
+    (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm({ ...form, [key]: e.target.value });
 
   const name = form.name.trim();
   const feed = toNumber(form.feed);
@@ -63,10 +65,15 @@ export default function SpeciesDrawer({
       : names.some((n) => n === name && n !== species?.name)
         ? "같은 이름의 종이 이미 있어요"
         : undefined,
-    feed: feed === null || outOfRange(feed, 1, 60) ? "1~60일 사이로 입력해 주세요" : undefined,
-    humidity: outOfRange(humidity, 0, 100) ? "0~100% 사이로 입력해 주세요" : undefined,
+    feed:
+      feed === null || outOfRange(feed, 1, 60)
+        ? "1~60일 사이로 입력해 주세요"
+        : undefined,
+    humidity: outOfRange(humidity, 0, 100)
+      ? "0~100% 사이로 입력해 주세요"
+      : undefined,
   };
-  const show = submitted ? errors : {};
+  const show: Partial<typeof errors> = submitted ? errors : {};
 
   const save = () => {
     setSubmitted(true);
@@ -97,27 +104,75 @@ export default function SpeciesDrawer({
             <h2 className="text-display-md flex-1">
               {species ? `종 수정 · ${species.name}` : "새 종 추가"}
             </h2>
-            <button type="button" aria-label="닫기" onClick={onClose} className="cursor-pointer">
+            <button
+              type="button"
+              aria-label="닫기"
+              onClick={onClose}
+              className="cursor-pointer"
+            >
               <Image src="/icons/close.svg" alt="" width={20} height={20} />
             </button>
           </div>
-          <Field label="이름" placeholder="예: 이구아나" value={form.name} onChange={set("name")} error={show.name} />
+          <Field
+            label="이름"
+            placeholder="예: 이구아나"
+            value={form.name}
+            onChange={set("name")}
+            error={show.name}
+          />
           <div className="flex gap-3 [&>label]:flex-1">
-            <Field label="급여 주기 (일 · 1~60)" placeholder="예: 3" value={form.feed} onChange={set("feed")} error={show.feed} />
-            <Field label="탈피 주기 (일)" placeholder="예: 30" value={form.shed} onChange={set("shed")} />
+            <Field
+              label="급여 주기 (일 · 1~60)"
+              placeholder="예: 3"
+              value={form.feed}
+              onChange={set("feed")}
+              error={show.feed}
+            />
+            <Field
+              label="탈피 주기 (일)"
+              placeholder="예: 30"
+              value={form.shed}
+              onChange={set("shed")}
+            />
           </div>
-          <SegmentField label="체형" options={shapes} value={shape} onChange={setShape} />
+          <SegmentField
+            label="체형"
+            options={shapes}
+            value={shape}
+            onChange={setShape}
+          />
           <SegmentField
             label="가시 여부 (드래곤·이구아나)"
             options={["없음", "있음"] as const}
             value={spike ? "있음" : "없음"}
             onChange={(v) => setSpike(v === "있음")}
           />
-          <SegmentField label="기본 사육장" options={homes} value={home} onChange={setHome} />
+          <SegmentField
+            label="기본 사육장"
+            options={homes}
+            value={home}
+            onChange={setHome}
+          />
           <div className="flex gap-3 [&>label]:flex-1">
-            <Field label="핫존 (℃)" placeholder="예: 32" value={form.hot} onChange={set("hot")} />
-            <Field label="쿨존 (℃)" placeholder="예: 26" value={form.cool} onChange={set("cool")} />
-            <Field label="습도 (% · 0~100)" placeholder="예: 40" value={form.humidity} onChange={set("humidity")} error={show.humidity} />
+            <Field
+              label="핫존 (℃)"
+              placeholder="예: 32"
+              value={form.hot}
+              onChange={set("hot")}
+            />
+            <Field
+              label="쿨존 (℃)"
+              placeholder="예: 26"
+              value={form.cool}
+              onChange={set("cool")}
+            />
+            <Field
+              label="습도 (% · 0~100)"
+              placeholder="예: 40"
+              value={form.humidity}
+              onChange={set("humidity")}
+              error={show.humidity}
+            />
           </div>
           <div className="mt-auto flex items-center gap-2.5">
             <p className="text-caption text-fg-tertiary flex-1">

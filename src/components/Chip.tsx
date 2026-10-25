@@ -12,9 +12,7 @@ export default function Chip({
   children: React.ReactNode;
 }) {
   return (
-    <span
-      className={`text-caption rounded-full px-2.5 py-1 ${tones[tone]}`}
-    >
+    <span className={`text-caption rounded-full px-2.5 py-1 ${tones[tone]}`}>
       {children}
     </span>
   );
