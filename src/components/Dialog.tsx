@@ -18,7 +18,9 @@ export default function Dialog({
       >
         <h2 className="text-title-lg">{title}</h2>
         <p className="text-body text-fg-secondary text-center">{message}</p>
-        <div className="flex w-full gap-2.5 *:flex-1">{children}</div>
+        <div className="flex w-full items-start gap-2.5 *:flex-1">
+          {children}
+        </div>
       </div>
     </div>
   );

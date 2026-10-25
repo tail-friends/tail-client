@@ -13,7 +13,7 @@ export default function GuidesPage({ searchParams }: PageProps<"/guides">) {
   return (
     <div className="flex h-screen gap-4 p-4">
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col gap-4">
+      <div className="relative flex min-w-0 flex-1 flex-col gap-4">
         <TopBar title="사육 가이드" />
         <Suspense>
           <GuidesContent searchParams={searchParams} />
