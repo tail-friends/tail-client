@@ -28,7 +28,7 @@ export default function GuideEditor({
   const { tone, label } = chip[status];
 
   return (
-    <section className="glass flex min-w-0 flex-1 flex-col gap-3.5 rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-6 py-5.5">
+    <section className="glass flex min-w-0 flex-1 flex-col gap-3.5 rounded-xl [--glass-angle:126deg] [--glass-from:0.78] [--glass-to:0.4] px-6 py-5.5">
       <div className="flex items-center gap-2.5">
         <h2 className="text-display-md flex-1">{name} 가이드</h2>
         <Chip tone={tone}>{label}</Chip>

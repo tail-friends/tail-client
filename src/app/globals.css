@@ -62,6 +62,18 @@
   border: 1px solid white;
   backdrop-filter: blur(1.125rem);
 
+  /* 흰색 그라데이션 테두리. 지원하지 않는 브라우저는 불투명한 흰 테두리 그대로 둔다 */
+  @supports (background-clip: border-area) {
+    border-color: transparent;
+    background: linear-gradient(
+      var(--glass-angle, 129deg),
+      white,
+      rgb(255 255 255 / 0.25) 45%,
+      rgb(255 255 255 / 0.75)
+    );
+    background-clip: border-area;
+  }
+
   &::before,
   &::after {
     content: "";
@@ -81,7 +93,7 @@
   &::after {
     inset: 0;
     background: linear-gradient(
-      to bottom right,
+      var(--glass-angle, 129deg),
       rgb(255 255 255 / var(--glass-from, 0.156)),
       rgb(255 255 255 / var(--glass-to, 0.08))
     );
