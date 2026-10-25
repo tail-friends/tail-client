@@ -101,13 +101,14 @@
   }
 }
 
-/* 1440 화면 기준(16px)으로 화면 폭에 비례해 전체 크기를 바꾼다. 1280보다 좁으면 가로 스크롤 */
+/* 1440×900 화면 기준(16px)으로 폭과 높이 중 빡빡한 쪽에 맞춰 전체 크기를 바꾼다.
+   1260보다 좁으면 크기를 고정하고 가로 스크롤. 1260은 세로 스크롤바(~20px) 폭을 뺀 여유 */
 html {
-  font-size: calc(max(100vw, 1280px) / 90);
+  font-size: max(min(100vw / 90, 100vh / 56.25), 1260px / 90);
 }
 
 body {
-  min-width: 1280px;
+  min-width: 1260px;
   background: var(--color-canvas) url("/images/admin-background.svg") center /
     cover fixed;
   color: var(--color-fg);
