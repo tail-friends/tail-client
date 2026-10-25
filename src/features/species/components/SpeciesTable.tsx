@@ -1,15 +1,27 @@
 import Chip from "@/components/Chip";
 
+export const shapes = ["gecko", "lizard", "snake", "turtle"] as const;
+export const homes = ["사막", "열대우림", "바위 협곡", "물가"] as const;
+
 export type Species = {
   name: string;
   feedDays: number;
-  shape: "gecko" | "lizard" | "snake" | "turtle";
-  spike: "등·턱" | null;
-  home: "사막" | "열대우림" | "바위 협곡" | "물가";
+  shape: (typeof shapes)[number];
+  spike: boolean;
+  home: (typeof homes)[number];
   shedDays: number | null;
-  env: string | null;
+  hotZone: number | null;
+  coolZone: number | null;
+  humidity: number | null;
   hidden: boolean;
+  animalCount?: number;
 };
+
+// 세 값이 다 있어야 보여주고, 아니면 미입력
+function envText({ hotZone, coolZone, humidity }: Species) {
+  if (hotZone === null || coolZone === null || humidity === null) return null;
+  return `${hotZone}℃ · ${coolZone}℃ · ${humidity}%`;
+}
 
 // Figma W-3 table. 칸 너비는 Figma 값 그대로 (190 · 90 · 150 · 60 · 110 · 90 · 230 · 80 · 100px)
 const columns = [
@@ -75,13 +87,13 @@ export default function SpeciesTable({
               <Cell width="w-47.5">{s.name}</Cell>
               <Cell width="w-22.5">{s.feedDays}일</Cell>
               <Cell width="w-37.5">{s.shape}</Cell>
-              <Cell width="w-15">{s.spike ?? "—"}</Cell>
+              <Cell width="w-15">{s.spike ? "등·턱" : "—"}</Cell>
               <Cell width="w-27.5">{s.home}</Cell>
               <Cell width="w-22.5" muted={s.shedDays === null}>
                 {s.shedDays === null ? "미입력" : `${s.shedDays}일`}
               </Cell>
-              <Cell width="w-57.5" muted={s.env === null}>
-                {s.env ?? "미입력"}
+              <Cell width="w-57.5" muted={envText(s) === null}>
+                {envText(s) ?? "미입력"}
               </Cell>
               <Cell width="w-20">
                 <Chip tone={s.hidden ? "muted" : "success"}>
