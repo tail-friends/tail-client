@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* Figma 관리자 웹 변수 (앱과 같은 토큰) */
+@theme {
+  --font-sans: var(--font-jua);
+
+  --color-canvas: #faf7f0;
+  --color-sunken: #f3efe6;
+  --color-line: #e6e1d6;
+  --color-primary: #2f6b57;
+  --color-primary-soft: #e4eedf;
+  --color-danger-soft: #fbe3df;
+  --color-warning-soft: #fbebd3;
+  --color-fg: #2b2a26;
+  --color-fg-secondary: #6b675e;
+  --color-fg-tertiary: #736e65;
+  --color-danger: #c0463a;
+  --color-warning: #96570c;
+  --color-success: #336b41;
+  --color-forest-500: #3f8068;
+  --color-moss-500: #a8c69f;
+
+  --radius-md: 0.75rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
+
+  --text-number-lg: 1.75rem;
+  --text-number-lg--line-height: 2rem;
+  --text-number-lg--letter-spacing: -0.0625rem;
+  --text-display-lg: 1.5rem;
+  --text-display-lg--line-height: 2rem;
+  --text-display-lg--letter-spacing: -0.0375rem;
+  --text-display-md: 1.1875rem;
+  --text-display-md--line-height: 1.625rem;
+  --text-display-md--letter-spacing: -0.025rem;
+  --text-title-md: 0.875rem;
+  --text-title-md--line-height: 1.25rem;
+  --text-title-md--letter-spacing: -0.0125rem;
+  --text-title-lg: 1rem;
+  --text-title-lg--line-height: 1.375rem;
+  --text-title-lg--letter-spacing: -0.01875rem;
+  --text-wordmark: 1rem;
+  --text-wordmark--line-height: 1.25rem;
+  --text-wordmark--letter-spacing: 0.4rem;
+  --text-button: 0.875rem;
+  --text-button--line-height: 1.25rem;
+  --text-button--letter-spacing: -0.0125rem;
+  --text-body: 0.8125rem;
+  --text-body--line-height: 1.1875rem;
+  --text-body--letter-spacing: -0.00625rem;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 0.875rem;
+}
+
+/* 카드·사이드바·상단 바에 쓰는 반투명 유리 효과.
+   Figma 순서대로 그림자 → 흰 반투명 배경을 쌓는다. 그림자가 카드 밑에도 깔려 비쳐 보여서
+   box-shadow 대신 블러한 판을 쓴다. 배경 투명도는 --glass-from / --glass-to로 바꾼다 */
+@utility glass {
+  position: relative;
+  border: 1px solid white;
+  backdrop-filter: blur(1.125rem);
+
+  /* 흰색 그라데이션 테두리. 지원하지 않는 브라우저는 불투명한 흰 테두리 그대로 둔다 */
+  @supports (background-clip: border-area) {
+    border-color: transparent;
+    background: linear-gradient(
+      var(--glass-angle, 129deg),
+      white,
+      rgb(255 255 255 / 0.25) 45%,
+      rgb(255 255 255 / 0.75)
+    );
+    background-clip: border-area;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  &::before {
+    inset: -1px;
+    background: rgb(61 51 41 / 0.08);
+    filter: blur(0.5rem);
+    transform: translateY(0.75rem);
+  }
+
+  &::after {
+    inset: 0;
+    background: linear-gradient(
+      var(--glass-angle, 129deg),
+      rgb(255 255 255 / var(--glass-from, 0.156)),
+      rgb(255 255 255 / var(--glass-to, 0.08))
+    );
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  }
+}
+
+/* 1440×900 화면 기준(16px)으로 폭과 높이 중 빡빡한 쪽에 맞춰 전체 크기를 바꾼다.
+   1260보다 좁으면 크기를 고정하고 가로 스크롤. 1260은 세로 스크롤바(~20px) 폭을 뺀 여유 */
+html {
+  font-size: max(min(100vw / 90, 100vh / 56.25), 1260px / 90);
+}
+
+body {
+  min-width: 1260px;
+  background: var(--color-canvas) url("/images/admin-background.svg") center /
+    cover fixed;
+  color: var(--color-fg);
+}
