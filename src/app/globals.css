@@ -17,6 +17,8 @@
   --color-danger: #c0463a;
   --color-warning: #96570c;
   --color-success: #336b41;
+  --color-forest-500: #3f8068;
+  --color-moss-500: #a8c69f;
 
   --radius-md: 0.75rem;
   --radius-lg: 1.125rem;
@@ -31,6 +33,9 @@
   --text-display-md: 1.1875rem;
   --text-display-md--line-height: 1.625rem;
   --text-display-md--letter-spacing: -0.025rem;
+  --text-title-md: 0.875rem;
+  --text-title-md--line-height: 1.25rem;
+  --text-title-md--letter-spacing: -0.0125rem;
   --text-title-lg: 1rem;
   --text-title-lg--line-height: 1.375rem;
   --text-title-lg--letter-spacing: -0.01875rem;
