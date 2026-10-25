@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { Suspense } from "react";
-import Button from "@/components/Button";
+import { buttonClass } from "@/components/Button";
 import Toast from "@/components/Toast";
 import LoginAlert from "@/features/auth/components/LoginAlert";
 import LoginCard from "@/features/auth/components/LoginCard";
@@ -43,9 +44,9 @@ async function LoginContent({
                 }
               />
             )}
-            <Button className="w-full">
+            <Link href="/login" className={`${buttonClass} w-full`}>
               {error === "forbidden" ? "다른 계정으로 로그인" : "다시 로그인"}
-            </Button>
+            </Link>
           </>
         ) : (
           <>
