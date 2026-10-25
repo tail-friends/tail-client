@@ -24,7 +24,7 @@ export default function AnalysisChart() {
             {ticks.map((tick) => (
               <div
                 key={tick}
-                className="absolute inset-x-0"
+                className="absolute inset-x-0 translate-y-px"
                 style={{ bottom: `${(tick / MAX) * 100}%` }}
               >
                 <div className="bg-line h-px" />
