@@ -10,8 +10,8 @@ const menus = [
   { href: "/guides", label: "사육 가이드", icon: "record" },
 ];
 
-// Figma Admin/Sidebar
-export default function Sidebar() {
+// Figma Admin/Sidebar. activeHref를 주면 주소 대신 그 메뉴를 강조한다 (404 화면용)
+export default function Sidebar({ activeHref }: { activeHref?: string }) {
   const pathname = usePathname();
 
   return (
@@ -19,7 +19,7 @@ export default function Sidebar() {
       <Brand size="sm" />
       <p className="text-caption text-fg-tertiary mt-6">메뉴</p>
       {menus.map(({ href, label, icon }) => {
-        const active = pathname === href;
+        const active = (activeHref ?? pathname) === href;
         return (
           <Link
             key={href}

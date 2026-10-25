@@ -7,7 +7,7 @@ import TopBar from "@/components/TopBar";
 export default function NotFound() {
   return (
     <div className="flex h-screen gap-4 p-4">
-      <Sidebar />
+      <Sidebar activeHref="/" />
       <div className="flex flex-1 flex-col gap-4">
         <TopBar title="오류" />
         <main className="flex flex-1 p-2">
