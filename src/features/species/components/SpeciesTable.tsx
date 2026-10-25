@@ -9,19 +9,8 @@ export type Species = {
   shape: (typeof shapes)[number];
   spike: boolean;
   home: (typeof homes)[number];
-  shedDays: number | null;
-  hotZone: number | null;
-  coolZone: number | null;
-  humidity: number | null;
   hidden: boolean;
-  animalCount?: number;
 };
-
-// 세 값이 다 있어야 보여주고, 아니면 미입력
-function envText({ hotZone, coolZone, humidity }: Species) {
-  if (hotZone === null || coolZone === null || humidity === null) return null;
-  return `${hotZone}℃ · ${coolZone}℃ · ${humidity}%`;
-}
 
 // Figma W-3 table. 칸 너비는 Figma 값 그대로 (190 · 90 · 150 · 60 · 110 · 90 · 230 · 80 · 100px)
 const columns = [
@@ -47,7 +36,7 @@ function Cell({
 }) {
   return (
     <div
-      className={`text-body flex h-5 items-center ${width} ${muted ? "text-fg-tertiary" : ""}`}
+      className={`text-body flex h-5 shrink-0 items-center ${width} ${muted ? "text-fg-tertiary" : ""}`}
     >
       {children}
     </div>
@@ -57,19 +46,18 @@ function Cell({
 export default function SpeciesTable({
   species,
   empty,
-  onEdit,
-  onToggleHidden,
 }: {
   species: Species[];
   empty: React.ReactNode;
-  onEdit: (name: string) => void;
-  onToggleHidden: (name: string) => void;
 }) {
   return (
     <div className="glass flex flex-1 flex-col rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-5.5 py-2">
       <div className="border-line flex items-center border-b py-3">
         {columns.map(({ label, width }, i) => (
-          <div key={i} className={`text-label text-fg-tertiary h-4 ${width}`}>
+          <div
+            key={i}
+            className={`text-label text-fg-tertiary h-4 shrink-0 ${width}`}
+          >
             {label}
           </div>
         ))}
@@ -86,28 +74,23 @@ export default function SpeciesTable({
               <Cell width="w-37.5">{s.shape}</Cell>
               <Cell width="w-15">{s.spike ? "등·턱" : "—"}</Cell>
               <Cell width="w-27.5">{s.home}</Cell>
-              <Cell width="w-22.5" muted={s.shedDays === null}>
-                {s.shedDays === null ? "미입력" : `${s.shedDays}일`}
+              <Cell width="w-22.5" muted>
+                미입력
               </Cell>
-              <Cell width="w-57.5" muted={envText(s) === null}>
-                {envText(s) ?? "미입력"}
+              <Cell width="w-57.5" muted>
+                미입력
               </Cell>
               <Cell width="w-20">
                 <Chip tone={s.hidden ? "muted" : "success"}>
                   {s.hidden ? "숨김" : "노출"}
                 </Chip>
               </Cell>
-              <div className="text-label flex h-5 w-25 items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => onEdit(s.name)}
-                  className="text-primary cursor-pointer"
-                >
+              <div className="text-label flex h-5 w-25 shrink-0 items-center gap-2">
+                <button type="button" className="text-primary cursor-pointer">
                   수정
                 </button>
                 <button
                   type="button"
-                  onClick={() => onToggleHidden(s.name)}
                   className="text-fg-tertiary cursor-pointer"
                 >
                   {s.hidden ? "다시 보이기" : "숨기기"}
