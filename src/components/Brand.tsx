@@ -3,8 +3,9 @@ export default function Brand({ size }: { size: "lg" | "sm" }) {
   const lg = size === "lg";
   return (
     <div className={`flex items-center gap-2 ${lg ? "" : "px-2"}`}>
+      {/* 브라우저는 마지막 글자 뒤에도 자간을 붙여서, Figma처럼 그만큼 당긴다 */}
       <span
-        className={`text-primary ${lg ? "text-display-lg" : "text-wordmark"}`}
+        className={`text-primary ${lg ? "text-display-lg" : "text-wordmark -mr-[6.4px]"}`}
       >
         꼬리친구
       </span>
