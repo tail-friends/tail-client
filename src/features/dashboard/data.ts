@@ -57,3 +57,5 @@ export const speciesCounts = [
   { name: "육지 거북", count: 35 },
   { name: "킹 스네이크", count: 18 },
 ];
+
+export const asOf = "2026.10.24 기준 · 10분마다 갱신";
