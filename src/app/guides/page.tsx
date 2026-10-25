@@ -13,7 +13,7 @@ export default function GuidesPage({ searchParams }: PageProps<"/guides">) {
   return (
     <div className="flex h-screen gap-4 p-4">
       <Sidebar />
-      <div className="relative flex min-w-0 flex-1 flex-col gap-4">
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
         <TopBar title="사육 가이드" />
         <Suspense>
           <GuidesContent searchParams={searchParams} />
@@ -69,12 +69,16 @@ async function GuidesContent({
         </Dialog>
       )}
       {state === "saved" && (
-        <Toast tone="success" position="top" className="w-55.75">
+        <Toast
+          tone="success"
+          position="top-[1.65625rem] left-211"
+          className="w-55.75"
+        >
           레오파드 게코 가이드를 저장했어요
         </Toast>
       )}
       {state === "failed" && (
-        <Toast position="top" className="w-65.75">
+        <Toast position="top-[1.65625rem] left-211" className="w-65.75">
           저장하지 못했어요 · 고친 내용은 그대로예요
         </Toast>
       )}

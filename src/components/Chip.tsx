@@ -1,21 +1,19 @@
-const toneClass = {
+const tones = {
   success: "bg-primary-soft text-success",
   warning: "bg-warning-soft text-warning",
-  neutral: "bg-sunken text-fg-secondary",
+  muted: "bg-sunken text-fg-secondary",
 };
 
-// Figma Admin/Chip · Success, Warning, Neutral
+// Figma Chip. success는 노출·저장됨, warning은 저장 안 됨, muted는 숨김·작성 전
 export default function Chip({
-  tone,
+  tone = "success",
   children,
 }: {
-  tone: keyof typeof toneClass;
+  tone?: keyof typeof tones;
   children: React.ReactNode;
 }) {
   return (
-    <span
-      className={`text-caption rounded-full px-2.5 py-1 ${toneClass[tone]}`}
-    >
+    <span className={`text-caption rounded-full px-2.5 py-1 ${tones[tone]}`}>
       {children}
     </span>
   );

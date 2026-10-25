@@ -7,7 +7,7 @@ export type GuideStatus = "saved" | "dirty" | "empty";
 const chip = {
   saved: { tone: "success", label: "저장됨" },
   dirty: { tone: "warning", label: "저장 안 됨" },
-  empty: { tone: "neutral", label: "작성 전" },
+  empty: { tone: "muted", label: "작성 전" },
 } as const;
 
 // Figma editor. 고친 내용이 있을 때만 되돌리기·저장 버튼이 켜진다.
