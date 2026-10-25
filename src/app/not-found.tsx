@@ -11,7 +11,7 @@ export default function NotFound() {
       <div className="flex flex-1 flex-col gap-4">
         <TopBar title="오류" />
         <main className="flex flex-1 p-2">
-          <div className="glass flex flex-1 flex-col items-center justify-center gap-3 rounded-xl bg-linear-146 from-white/78 to-white/40 px-8 py-12">
+          <div className="glass flex flex-1 flex-col items-center justify-center gap-3 rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-8 py-12">
             <span className="bg-sunken text-display-md text-fg-secondary flex size-12 items-center justify-center rounded-full">
               ?
             </span>

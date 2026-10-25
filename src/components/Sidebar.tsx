@@ -15,7 +15,7 @@ export default function Sidebar({ activeHref }: { activeHref?: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className="glass flex w-[232px] shrink-0 flex-col gap-1.5 rounded-xl bg-linear-105 from-white/16 to-white/8 px-4 py-6">
+    <nav className="glass flex w-[232px] shrink-0 flex-col gap-1.5 rounded-xl px-4 py-6">
       <Brand size="sm" />
       <p className="text-caption text-fg-tertiary mt-6">메뉴</p>
       {menus.map(({ href, label, icon }) => {
