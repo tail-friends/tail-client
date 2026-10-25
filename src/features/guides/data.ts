@@ -15,7 +15,7 @@ const empty: Content = { 습성: "", 먹이: "", 환경: "", 건강: "" };
 
 // 퍼블리싱용 고정값. 서버 연결 전까지 Figma 시안의 목록을 그대로 쓴다
 // shortcut: 레오파드 게코 말고는 시안에 본문이 없어 빈 칸으로 둔다, API 연결할 때 교체
-export const initialGuides: Guide[] = [
+export const guides: Guide[] = [
   {
     id: "leopard-gecko",
     name: "레오파드 게코",
