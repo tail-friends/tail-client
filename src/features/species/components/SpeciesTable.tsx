@@ -10,6 +10,10 @@ export type Species = {
   spike: boolean;
   home: (typeof homes)[number];
   hidden: boolean;
+  moltDays?: number;
+  hot?: number;
+  cool?: number;
+  humidity?: number;
 };
 
 // Figma W-3 table. 칸 너비는 Figma 값 그대로 (190 · 90 · 150 · 60 · 110 · 90 · 230 · 80 · 100px)
@@ -43,12 +47,26 @@ function Cell({
   );
 }
 
+// 핫존 · 쿨존 · 습도 중 입력된 값만 "32℃ · 26℃ · 40%"로 잇는다
+function climate({ hot, cool, humidity }: Species) {
+  const parts = [
+    hot !== undefined && `${hot}℃`,
+    cool !== undefined && `${cool}℃`,
+    humidity !== undefined && `${humidity}%`,
+  ].filter(Boolean);
+  return parts.length ? parts.join(" · ") : undefined;
+}
+
 export default function SpeciesTable({
   species,
   empty,
+  onEdit,
+  onToggleHidden,
 }: {
   species: Species[];
   empty: React.ReactNode;
+  onEdit: (s: Species) => void;
+  onToggleHidden: (s: Species) => void;
 }) {
   return (
     <div className="glass flex flex-1 flex-col rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-5.5 py-2">
@@ -74,11 +92,11 @@ export default function SpeciesTable({
               <Cell width="w-37.5">{s.shape}</Cell>
               <Cell width="w-15">{s.spike ? "등·턱" : "—"}</Cell>
               <Cell width="w-27.5">{s.home}</Cell>
-              <Cell width="w-22.5" muted>
-                미입력
+              <Cell width="w-22.5" muted={s.moltDays === undefined}>
+                {s.moltDays === undefined ? "미입력" : `${s.moltDays}일`}
               </Cell>
-              <Cell width="w-57.5" muted>
-                미입력
+              <Cell width="w-57.5" muted={!climate(s)}>
+                {climate(s) ?? "미입력"}
               </Cell>
               <Cell width="w-20">
                 <Chip tone={s.hidden ? "muted" : "success"}>
@@ -86,11 +104,16 @@ export default function SpeciesTable({
                 </Chip>
               </Cell>
               <div className="text-label flex h-5 w-25 shrink-0 items-center gap-2">
-                <button type="button" className="text-primary cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => onEdit(s)}
+                  className="text-primary cursor-pointer"
+                >
                   수정
                 </button>
                 <button
                   type="button"
+                  onClick={() => onToggleHidden(s)}
                   className="text-fg-tertiary cursor-pointer"
                 >
                   {s.hidden ? "다시 보이기" : "숨기기"}
