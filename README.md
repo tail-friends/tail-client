@@ -50,5 +50,5 @@ src/
 
 - 브랜치 전략: `feature/*` → `develop` → `main`. 작업 브랜치는 `develop`으로 PR, 배포할 때 `develop`을 `main`으로 PR.
 - `develop`·`main`에 직접 푸시 금지. PR → CI 통과 시 승인 없이 머지.
-- CI: `.github/workflows/ci.yml` (lint, format, typecheck, build). 필수 체크는 `Build`.
+- CI: `.github/workflows/ci.yml`. `Lint`(ESLint·Prettier), `Typecheck`, `Build` 세 작업이 동시에 돌고 모두 필수 체크입니다.
 - `develop`·`main`이 갱신되면 열린 PR 브랜치를 자동으로 업데이트하고 CI를 다시 돌립니다.
