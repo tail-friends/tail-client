@@ -10,20 +10,23 @@ const chip = {
   empty: { tone: "muted", label: "작성 전" },
 } as const;
 
-// Figma editor. 고친 내용이 있을 때만 되돌리기·저장 버튼이 켜진다.
-// activeSection은 고치는 중인 칸(초록 테두리)
+// Figma editor. 고친 내용이 있을 때만 되돌리기·저장 버튼이 켜진다
 export default function GuideEditor({
   name,
   content,
   status,
   updatedAt,
-  activeSection,
+  onChange,
+  onRevert,
+  onSave,
 }: {
   name: string;
   content: Content;
   status: GuideStatus;
   updatedAt?: string;
-  activeSection?: Section;
+  onChange: (section: Section, value: string) => void;
+  onRevert: () => void;
+  onSave: () => void;
 }) {
   const { tone, label } = chip[status];
 
@@ -37,9 +40,10 @@ export default function GuideEditor({
         <label key={section} className="flex flex-col gap-1.5">
           <span className="text-label text-fg-secondary">{section}</span>
           <textarea
-            defaultValue={content[section]}
+            value={content[section]}
+            onChange={(e) => onChange(section, e.target.value)}
             placeholder={`${section} 내용을 적어 주세요`}
-            className={`text-body placeholder:text-fg-tertiary focus:border-primary focus:shadow-[inset_0_0_0_0.03125rem_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none ${section === activeSection ? "border-primary shadow-[inset_0_0_0_0.03125rem_var(--color-primary)]" : "border-line"}`}
+            className={`text-body placeholder:text-fg-tertiary focus:border-primary focus:shadow-[inset_0_0_0_0.03125rem_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none border-line`}
           />
         </label>
       ))}
@@ -49,10 +53,19 @@ export default function GuideEditor({
             ? `마지막 수정 ${updatedAt} · 운영자`
             : "아직 작성하지 않았어요"}
         </p>
-        <Button variant="ghost" disabled={status !== "dirty"} className="w-20">
+        <Button
+          variant="ghost"
+          disabled={status !== "dirty"}
+          onClick={onRevert}
+          className="w-20"
+        >
           되돌리기
         </Button>
-        <Button disabled={status !== "dirty"} className="w-14.5">
+        <Button
+          disabled={status !== "dirty"}
+          onClick={onSave}
+          className="w-14.5"
+        >
           저장
         </Button>
       </div>
