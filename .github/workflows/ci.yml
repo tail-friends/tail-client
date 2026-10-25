@@ -5,8 +5,6 @@ on:
     branches: [develop, main]
   push:
     branches: [develop, main]
-  # auto-update-branches.yml이 브랜치를 갱신한 뒤 CI를 직접 실행한다
-  workflow_dispatch:
 
 permissions:
   contents: read
