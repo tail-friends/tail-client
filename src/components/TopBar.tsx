@@ -11,7 +11,7 @@ export default function TopBar({ title }: { title: string }) {
       </div>
       <button
         type="button"
-        className="glass text-label text-fg-secondary cursor-pointer rounded-full bg-linear-154 from-white/94 to-white/64 px-4 py-[9px]"
+        className="text-label border border-white shadow-[inset_0_1px_0_rgb(255_255_255/0.9)] backdrop-blur-[18px] text-fg-secondary cursor-pointer rounded-full bg-linear-154 from-white/94 to-white/64 px-4 py-[9px]"
       >
         로그아웃
       </button>
