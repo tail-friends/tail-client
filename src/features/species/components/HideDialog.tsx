@@ -2,9 +2,13 @@
 export default function HideDialog({
   title,
   message,
+  onCancel,
+  onConfirm,
 }: {
   title: string;
   message: string;
+  onCancel: () => void;
+  onConfirm: () => void;
 }) {
   return (
     <>
@@ -22,12 +26,14 @@ export default function HideDialog({
           <div className="flex w-full items-start gap-2.5">
             <button
               type="button"
+              onClick={onCancel}
               className="text-body border-line flex-1 cursor-pointer rounded-full border bg-linear-to-br from-white/19 to-white/13 px-4.5 py-2.5 shadow-[inset_0_1px_0_rgb(255_255_255/0.9)] backdrop-blur-[1.125rem]"
             >
               취소
             </button>
             <button
               type="button"
+              onClick={onConfirm}
               className="bg-danger text-body flex-1 cursor-pointer rounded-full px-4.5 py-2.5 text-white"
             >
               숨기기
