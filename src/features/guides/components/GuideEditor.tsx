@@ -45,7 +45,7 @@ export default function GuideEditor({
             value={content[section]}
             onChange={(e) => onChange(section, e.target.value)}
             placeholder={`${section} 내용을 적어 주세요`}
-            className="text-body border-line placeholder:text-fg-tertiary focus:border-primary focus:shadow-[0_0_0_0.5px_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none"
+            className="text-body border-line placeholder:text-fg-tertiary focus:border-primary focus:shadow-[0_0_0_0.03125rem_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none"
           />
         </label>
       ))}

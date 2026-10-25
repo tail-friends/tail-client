@@ -9,7 +9,7 @@ export default function Dialog({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-fg/14 backdrop-blur-[3px]">
+    <div className="fixed inset-0 flex items-center justify-center bg-fg/14 backdrop-blur-[0.1875rem]">
       <div
         role="dialog"
         aria-modal="true"
