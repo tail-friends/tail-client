@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 import AnalysisChart from "@/features/dashboard/components/AnalysisChart";
@@ -6,8 +7,18 @@ import StatCard from "@/features/dashboard/components/StatCard";
 import StatsError from "@/features/dashboard/components/StatsError";
 import { asOf, stats } from "@/features/dashboard/data";
 
+export default function Home({ searchParams }: PageProps<"/">) {
+  return (
+    <Suspense>
+      <Dashboard searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
 // Figma W-2. ?error=failed면 W-2a(불러오기 실패)
-export default async function Home({ searchParams }: PageProps<"/">) {
+async function Dashboard({
+  searchParams,
+}: Pick<PageProps<"/">, "searchParams">) {
   const failed = (await searchParams).error === "failed";
 
   return (
