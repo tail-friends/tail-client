@@ -49,10 +49,12 @@ export default function GuideEditor({
             ? `마지막 수정 ${updatedAt} · 운영자`
             : "아직 작성하지 않았어요"}
         </p>
-        <Button variant="ghost" disabled={status !== "dirty"}>
+        <Button variant="ghost" disabled={status !== "dirty"} className="w-20">
           되돌리기
         </Button>
-        <Button disabled={status !== "dirty"}>저장</Button>
+        <Button disabled={status !== "dirty"} className="w-14.5">
+          저장
+        </Button>
       </div>
     </section>
   );

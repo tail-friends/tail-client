@@ -69,12 +69,14 @@ async function GuidesContent({
         </Dialog>
       )}
       {state === "saved" && (
-        <Toast tone="success" position="top">
+        <Toast tone="success" position="top" className="w-55.75">
           레오파드 게코 가이드를 저장했어요
         </Toast>
       )}
       {state === "failed" && (
-        <Toast position="top">저장하지 못했어요 · 고친 내용은 그대로예요</Toast>
+        <Toast position="top" className="w-65.75">
+          저장하지 못했어요 · 고친 내용은 그대로예요
+        </Toast>
       )}
     </div>
   );
