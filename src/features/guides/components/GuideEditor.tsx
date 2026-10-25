@@ -39,7 +39,7 @@ export default function GuideEditor({
           <textarea
             defaultValue={content[section]}
             placeholder={`${section} 내용을 적어 주세요`}
-            className={`text-body placeholder:text-fg-tertiary focus:border-primary focus:shadow-[0_0_0_0.03125rem_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none ${section === activeSection ? "border-primary shadow-[0_0_0_0.03125rem_var(--color-primary)]" : "border-line"}`}
+            className={`text-body placeholder:text-fg-tertiary focus:border-primary focus:shadow-[inset_0_0_0_0.03125rem_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none ${section === activeSection ? "border-primary shadow-[inset_0_0_0_0.03125rem_var(--color-primary)]" : "border-line"}`}
           />
         </label>
       ))}

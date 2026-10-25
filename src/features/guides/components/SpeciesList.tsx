@@ -4,7 +4,7 @@ import { guides } from "../data";
 export default function SpeciesList({ selectedId }: { selectedId: string }) {
   return (
     <section className="glass flex w-60 shrink-0 flex-col gap-1 rounded-xl [--glass-from:0.78] [--glass-to:0.4] px-3 py-4.5">
-      <h2 className="text-button mb-1.5 px-2.5">종 선택</h2>
+      <h2 className="text-button mb-2.5 px-2.5">종 선택</h2>
       {guides.map(({ id, name, updatedAt }) => {
         const selected = id === selectedId;
         return (
