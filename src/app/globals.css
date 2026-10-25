@@ -1,26 +1,65 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Figma 관리자 웹 변수 (앱과 같은 토큰) */
+@theme {
+  --font-sans: var(--font-jua);
+
+  --color-canvas: #faf7f0;
+  --color-sunken: #f3efe6;
+  --color-line: #e6e1d6;
+  --color-primary: #2f6b57;
+  --color-primary-soft: #e4eedf;
+  --color-danger-soft: #fbe3df;
+  --color-warning-soft: #fbebd3;
+  --color-fg: #2b2a26;
+  --color-fg-secondary: #6b675e;
+  --color-fg-tertiary: #736e65;
+  --color-danger: #c0463a;
+  --color-warning: #96570c;
+  --color-success: #336b41;
+
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  --text-number-lg: 28px;
+  --text-number-lg--line-height: 32px;
+  --text-number-lg--letter-spacing: -1px;
+  --text-display-lg: 24px;
+  --text-display-lg--line-height: 32px;
+  --text-display-lg--letter-spacing: -0.6px;
+  --text-display-md: 19px;
+  --text-display-md--line-height: 26px;
+  --text-display-md--letter-spacing: -0.4px;
+  --text-title-lg: 16px;
+  --text-title-lg--line-height: 22px;
+  --text-title-lg--letter-spacing: -0.3px;
+  --text-wordmark: 16px;
+  --text-wordmark--line-height: 20px;
+  --text-wordmark--letter-spacing: 6.4px;
+  --text-button: 14px;
+  --text-button--line-height: 20px;
+  --text-button--letter-spacing: -0.2px;
+  --text-body: 13px;
+  --text-body--line-height: 19px;
+  --text-body--letter-spacing: -0.1px;
+  --text-label: 12px;
+  --text-label--line-height: 16px;
+  --text-caption: 11px;
+  --text-caption--line-height: 14px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 카드·사이드바·상단 바에 쓰는 반투명 유리 효과 */
+@utility glass {
+  border: 1px solid white;
+  backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 12px 16px rgb(61 51 41 / 0.08);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas) url("/images/admin-background.svg") center /
+    cover fixed;
+  color: var(--color-fg);
 }
