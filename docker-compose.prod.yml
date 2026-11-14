@@ -1,0 +1,10 @@
+# 운영 서버용. 이미지는 CI가 GHCR에 올린 것을 쓴다 (배포 워크플로가 IMAGE_TAG를 넘긴다).
+# 서버의 3000은 tail-server 그라파나가 쓰므로 3001로 연다 (컨테이너 안은 3000).
+# API 주소(NEXT_PUBLIC_API_URL)는 이미지를 빌드할 때 들어가므로 여기서 넣지 않는다.
+services:
+  web:
+    image: ghcr.io/tail-friends/tail-client:${IMAGE_TAG:?IMAGE_TAG is required}
+    container_name: tailfriends-web
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
