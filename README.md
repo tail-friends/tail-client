@@ -18,6 +18,7 @@ npm run dev        # http://localhost:3000
 | `npm run lint`      | ESLint                                    |
 | `npm run format`    | Prettier로 포맷 (`format:check`는 검사만) |
 | `npm run typecheck` | 라우트 타입 생성 + `tsc`                  |
+| `npm test`          | Vitest 테스트 (`*.test.ts`)               |
 
 ## 환경 변수
 
@@ -45,7 +46,10 @@ src/
       components/ # 이 도메인에서만 쓰는 컴포넌트
   components/     # 여러 도메인이 같이 쓰는 UI
   lib/            # 공용 설정 (api.ts: axios 인스턴스)
+  test/           # 테스트 도우미 (fakeServer.ts: axios 가짜 서버)
 ```
+
+- 테스트는 대상 파일 옆에 `*.test.ts`로 둡니다.
 
 - 한 도메인에서만 쓰면 `features/<도메인>`, 두 곳 이상에서 쓰면 `components/`로 옮깁니다.
 - 페이지 경로는 디자인이 나오면 잡습니다.
