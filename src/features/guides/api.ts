@@ -29,9 +29,11 @@ function toGuide({ speciesId, name, sections }: GuideResponse): Guide {
 }
 
 // shortcut: 목록에 수정 날짜가 없어 종마다 가이드를 따로 불러온다, 종이 많아지면 서버에 목록용 API 요청
-// 로그인 연동(#23) 전이라 로그인 없이 되는 조회 API를 쓴다. 숨긴 종은 빠진다
+// 숨긴 종도 이미 등록된 개체가 있으면 가이드가 보이므로 관리자 목록으로 숨긴 종까지 불러온다
 export async function fetchGuides() {
-  const { species } = await get<{ species: { id: number }[] }>("/species");
+  const { species } = await get<{ species: { id: number }[] }>(
+    "/admin/species",
+  );
   const guides = await Promise.all(
     species.map(({ id }) => get<GuideResponse>(`/species/${id}/guide`)),
   );
