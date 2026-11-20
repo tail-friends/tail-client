@@ -28,7 +28,10 @@ export default function SpeciesManager() {
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Editing>();
   const [hiding, setHiding] = useState<Species>();
-  const [toast, setToast] = useState<string>();
+  const [toast, setToast] = useState<{
+    tone: "success" | "error";
+    text: string;
+  }>();
 
   useEffect(() => {
     if (!toast) return;
@@ -53,26 +56,35 @@ export default function SpeciesManager() {
     try {
       await saveSpecies({ id: current.target?.id, species: next });
     } catch (e) {
+      // 어느 쪽이든 드로어를 닫지 않아 입력한 내용이 그대로 남는다
       const error = inputError(e);
-      if (!error) throw e;
-      // 드로어를 닫지 않아 입력한 내용이 그대로 남는다
-      return setEditing({ ...current, error });
+      if (error) return setEditing({ ...current, error });
+      return setToast({
+        tone: "error",
+        text: "저장하지 못했어요 · 입력한 내용은 그대로예요",
+      });
     }
     setEditing(undefined);
-    setToast(`${next.name}을(를) 저장했어요 · 앱 종 목록에 반영됐어요`);
+    setToast({
+      tone: "success",
+      text: `${next.name}을(를) 저장했어요 · 앱 종 목록에 반영됐어요`,
+    });
   }
 
   function toggleHidden(s: Species) {
     if (!s.hidden) return setHiding(s);
     replace(s, { ...s, hidden: false });
-    setToast(`${s.name}을(를) 다시 보이게 했어요`);
+    setToast({ tone: "success", text: `${s.name}을(를) 다시 보이게 했어요` });
   }
 
   function hide() {
     const s = hiding!;
     replace(s, { ...s, hidden: true });
     setHiding(undefined);
-    setToast(`${s.name}을(를) 숨겼어요 · 앱 새 등록 목록에서 빠졌어요`);
+    setToast({
+      tone: "success",
+      text: `${s.name}을(를) 숨겼어요 · 앱 새 등록 목록에서 빠졌어요`,
+    });
   }
 
   return (
@@ -136,7 +148,16 @@ export default function SpeciesManager() {
           onConfirm={hide}
         />
       )}
-      {toast && <Toast position="top-[1.65625rem] left-211">{toast}</Toast>}
+      {toast && (
+        // 실패 토스트는 드로어가 열린 채 뜨므로 딤·드로어 위로 올린다
+        <Toast
+          tone={toast.tone}
+          position="top-[1.65625rem] left-211"
+          className="z-30"
+        >
+          {toast.text}
+        </Toast>
+      )}
     </>
   );
 }
