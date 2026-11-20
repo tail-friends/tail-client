@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { canLogin, startLogin } from "../api";
 
 const providers = {
   apple: {
@@ -18,7 +21,7 @@ const providers = {
   },
 };
 
-// Figma Button/Social
+// Figma Button/Social. 웹에서 연결하지 않은 방식(애플)은 비활성으로 보인다
 export default function SocialLoginButton({
   provider,
 }: {
@@ -28,7 +31,9 @@ export default function SocialLoginButton({
   return (
     <button
       type="button"
-      className={`text-button relative flex h-12.5 w-full cursor-pointer items-center justify-center rounded-full ${className}`}
+      disabled={!canLogin(provider)}
+      onClick={() => canLogin(provider) && startLogin(provider)}
+      className={`text-button relative flex h-12.5 w-full cursor-pointer items-center disabled:cursor-not-allowed disabled:opacity-40 justify-center rounded-full ${className}`}
     >
       <Image
         src={`/icons/${provider}.svg`}

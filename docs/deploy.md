@@ -40,9 +40,13 @@ cd /opt/tail-server && sudo -u deploy env IMAGE_TAG="$(cat current_tag)" docker 
 
 Settings → Secrets and variables → Actions → **Variables** → New repository variable
 
-| 이름                  | 값                                                       |
-| --------------------- | -------------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | 운영 서버 API 주소. 예: `http://<서버 주소>:8080/api/v1` |
+| 이름                           | 값                                                           |
+| ------------------------------ | ------------------------------------------------------------ |
+| `NEXT_PUBLIC_API_URL`          | 운영 서버 API 주소. 예: `http://<서버 주소>:8080/api/v1`     |
+| `NEXT_PUBLIC_KAKAO_CLIENT_ID`  | 카카오 REST API 키 (서버 `KAKAO_CLIENT_ID`와 같은 값)        |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | 구글 OAuth 클라이언트 ID (서버 `GOOGLE_CLIENT_ID`와 같은 값) |
+
+카카오 디벨로퍼스와 구글 클라우드 콘솔의 Redirect URI에 `<웹 주소>/login`을 등록한다.
 
 ### prod environment
 
