@@ -46,6 +46,7 @@ export default function SpeciesDrawer({
   title,
   species,
   error,
+  onEdit,
   isDuplicate,
   onSave,
   onClose,
@@ -53,6 +54,7 @@ export default function SpeciesDrawer({
   title: string;
   species: Partial<Species>;
   error?: string;
+  onEdit: () => void;
   isDuplicate: (name: string) => boolean;
   onSave: (s: Omit<Species, "id">) => void;
   onClose: () => void;
@@ -122,7 +124,11 @@ export default function SpeciesDrawer({
     <>
       <div className="bg-fg/14 fixed inset-0 z-10 backdrop-blur-[0.1875rem]" />
       <div className="fixed top-4 right-4 bottom-4 z-20 isolate w-120">
-        <aside className="glass flex h-full flex-col gap-4 overflow-y-auto rounded-xl p-6 [--glass-from:1] [--glass-to:1]">
+        <aside
+          // 칸에 입력하면 알린다. 서버 오류 안내를 지우는 데 쓴다
+          onInput={onEdit}
+          className="glass flex h-full flex-col gap-4 overflow-y-auto rounded-xl p-6 [--glass-from:1] [--glass-to:1]"
+        >
           <div className="flex items-center">
             <h2 className="text-display-md flex-1">{title}</h2>
             <button type="button" onClick={onClose} className="cursor-pointer">

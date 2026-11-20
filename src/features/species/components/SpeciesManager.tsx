@@ -122,6 +122,9 @@ export default function SpeciesManager() {
           }
           species={editing.draft}
           error={editing.error}
+          onEdit={() =>
+            setEditing((e) => (e?.error ? { ...e, error: undefined } : e))
+          }
           isDuplicate={(name) =>
             species.some((s) => s.id !== editing.target?.id && s.name === name)
           }
