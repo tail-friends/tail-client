@@ -1,9 +1,10 @@
 import Chip from "@/components/Chip";
 
 export const shapes = ["gecko", "lizard", "snake", "turtle"] as const;
-export const homes = ["사막", "열대우림", "바위 협곡", "물가"] as const;
+export const homes = ["사막", "열대우림", "바위 협곡", "밤", "물가"] as const;
 
 export type Species = {
+  id: number;
   name: string;
   feedDays: number;
   shape: (typeof shapes)[number];
@@ -11,9 +12,12 @@ export type Species = {
   home: (typeof homes)[number];
   hidden: boolean;
   moltDays?: number;
-  hot?: number;
-  cool?: number;
-  humidity?: number;
+  hotMin?: number;
+  hotMax?: number;
+  coolMin?: number;
+  coolMax?: number;
+  humidityMin?: number;
+  humidityMax?: number;
 };
 
 // Figma W-3 table. 칸 너비는 Figma 값 그대로 (190 · 90 · 150 · 60 · 110 · 90 · 230 · 80 · 100px)
@@ -47,12 +51,19 @@ function Cell({
   );
 }
 
-// 핫존 · 쿨존 · 습도 중 입력된 값만 "32℃ · 26℃ · 40%"로 잇는다
-function climate({ hot, cool, humidity }: Species) {
+// 최소·최대 중 있는 값만 "34~36", 같으면 "34", 한쪽만 있으면 "34~" · "~36"
+export function range(min?: number, max?: number) {
+  if (min === undefined) return max === undefined ? undefined : `~${max}`;
+  if (max === undefined) return `${min}~`;
+  return min === max ? `${min}` : `${min}~${max}`;
+}
+
+// 핫존 · 쿨존 · 습도 중 입력된 값만 "34~36℃ · 21~25℃ · 30~40%"로 잇는다
+function climate(s: Species) {
   const parts = [
-    hot !== undefined && `${hot}℃`,
-    cool !== undefined && `${cool}℃`,
-    humidity !== undefined && `${humidity}%`,
+    range(s.hotMin, s.hotMax)?.concat("℃"),
+    range(s.coolMin, s.coolMax)?.concat("℃"),
+    range(s.humidityMin, s.humidityMax)?.concat("%"),
   ].filter(Boolean);
   return parts.length ? parts.join(" · ") : undefined;
 }

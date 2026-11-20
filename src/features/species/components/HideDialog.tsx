@@ -2,11 +2,13 @@
 export default function HideDialog({
   title,
   message,
+  pending,
   onCancel,
   onConfirm,
 }: {
   title: string;
   message: string;
+  pending: boolean;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
@@ -34,7 +36,8 @@ export default function HideDialog({
             <button
               type="button"
               onClick={onConfirm}
-              className="bg-danger text-body flex-1 cursor-pointer rounded-full px-4.5 py-2.5 text-white"
+              disabled={pending}
+              className="bg-danger text-body flex-1 cursor-pointer rounded-full px-4.5 py-2.5 text-white disabled:cursor-default disabled:opacity-45"
             >
               숨기기
             </button>
