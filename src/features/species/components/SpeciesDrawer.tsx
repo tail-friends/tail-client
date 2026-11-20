@@ -45,12 +45,14 @@ const toNumber = (v: string) => (v.trim() === "" ? undefined : Number(v));
 export default function SpeciesDrawer({
   title,
   species,
+  error,
   isDuplicate,
   onSave,
   onClose,
 }: {
   title: string;
   species: Partial<Species>;
+  error?: string;
   isDuplicate: (name: string) => boolean;
   onSave: (s: Omit<Species, "id">) => void;
   onClose: () => void;
@@ -179,8 +181,12 @@ export default function SpeciesDrawer({
             </div>
           ))}
           <div className="mt-auto flex items-center gap-2.5">
-            <p className="text-caption text-fg-tertiary flex-1">
-              저장하면 앱의 종 선택 목록에 바로 반영돼요
+            {/* 서버가 돌려준 입력 오류(이름 중복 등)는 안내문 자리에 보여 준다 */}
+            <p
+              role={error ? "alert" : undefined}
+              className={`text-caption flex-1 ${error ? "text-[#b23b30]" : "text-fg-tertiary"}`}
+            >
+              {error ?? "저장하면 앱의 종 선택 목록에 바로 반영돼요"}
             </p>
             <button
               type="button"

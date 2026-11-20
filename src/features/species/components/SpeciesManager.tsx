@@ -4,19 +4,22 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
-import { speciesKey, useSpecies } from "../queries";
+import { inputError } from "../api";
+import { speciesKey, useSaveSpecies, useSpecies } from "../queries";
 import HideDialog from "./HideDialog";
 import SpeciesDrawer from "./SpeciesDrawer";
 import SpeciesSearch from "./SpeciesSearch";
 import SpeciesTable, { type Species } from "./SpeciesTable";
 
-// 추가는 빈 값(이름만 채울 수도 있음), 수정은 고르는 종. 둘 다 같은 드로어를 쓴다
-type Editing = { target?: Species; draft: Partial<Species> };
+// 추가는 빈 값(이름만 채울 수도 있음), 수정은 고르는 종. 둘 다 같은 드로어를 쓴다.
+// error는 저장할 때 서버가 돌려준 입력 오류
+type Editing = { target?: Species; draft: Partial<Species>; error?: string };
 
 export default function SpeciesManager() {
   const { data: species } = useSpecies();
+  const { mutateAsync: saveSpecies, isPending: saving } = useSaveSpecies();
   const queryClient = useQueryClient();
-  // shortcut: 추가·수정·숨기기는 아직 목록 캐시만 바꾼다, 저장 API를 붙이면 서버 응답으로 바꾼다
+  // shortcut: 숨기기는 아직 목록 캐시만 바꾼다, 숨기기 API를 붙이면 서버 응답으로 바꾼다
   const setSpecies = (update: (list: Species[]) => Species[]) =>
     queryClient.setQueryData<Species[]>(
       speciesKey,
@@ -43,10 +46,18 @@ export default function SpeciesManager() {
     setSpecies((list) => list.map((s) => (s.id === target.id ? next : s)));
   }
 
-  function save(next: Omit<Species, "id">) {
-    const { target } = editing!;
-    if (target) replace(target, { ...next, id: target.id });
-    else setSpecies((list) => [...list, { ...next, id: 0 }]);
+  async function save(next: Omit<Species, "id">) {
+    // 저장 중에 다시 누르면 요청이 두 번 가지 않게 막는다
+    if (saving) return;
+    const current = editing!;
+    try {
+      await saveSpecies({ id: current.target?.id, species: next });
+    } catch (e) {
+      const error = inputError(e);
+      if (!error) throw e;
+      // 드로어를 닫지 않아 입력한 내용이 그대로 남는다
+      return setEditing({ ...current, error });
+    }
     setEditing(undefined);
     setToast(`${next.name}을(를) 저장했어요 · 앱 종 목록에 반영됐어요`);
   }
@@ -107,6 +118,7 @@ export default function SpeciesManager() {
             editing.target ? `종 수정 · ${editing.target.name}` : "새 종 추가"
           }
           species={editing.draft}
+          error={editing.error}
           isDuplicate={(name) =>
             species.some((s) => s.id !== editing.target?.id && s.name === name)
           }

@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { api } from "@/lib/api";
 import { homes, type Species } from "./components/SpeciesTable";
 
@@ -53,4 +54,40 @@ export async function getSpecies() {
     "/admin/species",
   );
   return data.data.species.map(toSpecies);
+}
+
+// 숨김은 따로 바꾸므로(hideSpecies) 보내지 않는다. 빈 값은 JSON에서 빠져, 수정할 때 서버 값이 그대로 남는다
+function toRequest(s: Omit<Species, "id">) {
+  return {
+    name: s.name,
+    shape: s.shape,
+    spiky: s.spike,
+    feedIntervalDays: s.feedDays,
+    shedIntervalDays: s.moltDays,
+    hotMin: s.hotMin,
+    hotMax: s.hotMax,
+    coolMin: s.coolMin,
+    coolMax: s.coolMax,
+    humidityMin: s.humidityMin,
+    humidityMax: s.humidityMax,
+    defaultHome: homeKeys[s.home],
+  };
+}
+
+// id가 없으면 추가(POST), 있으면 수정(PATCH). 서버가 저장한 종을 돌려준다
+export async function saveSpecies(
+  id: number | undefined,
+  species: Omit<Species, "id">,
+) {
+  const body = toRequest(species);
+  const { data } = await (id === undefined
+    ? api.post<{ data: SpeciesResponse }>("/admin/species", body)
+    : api.patch<{ data: SpeciesResponse }>(`/admin/species/${id}`, body));
+  return toSpecies(data.data);
+}
+
+// 이름 중복 같은 입력 오류(400)면 서버 안내문을, 아니면 undefined
+export function inputError(error: unknown) {
+  if (!isAxiosError(error) || error.response?.status !== 400) return;
+  return error.response.data?.error?.message as string | undefined;
 }
