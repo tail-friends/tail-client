@@ -21,10 +21,7 @@ export default function SpeciesManager() {
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Editing>();
   const [hiding, setHiding] = useState<Species>();
-  const [toast, setToast] = useState<{
-    tone: "success" | "error";
-    text: string;
-  }>();
+  const [toast, setToast] = useState<string>();
 
   useEffect(() => {
     if (!toast) return;
@@ -48,16 +45,10 @@ export default function SpeciesManager() {
       // 어느 쪽이든 드로어를 닫지 않아 입력한 내용이 그대로 남는다
       const error = inputError(e);
       if (error) return setEditing({ ...current, error });
-      return setToast({
-        tone: "error",
-        text: "저장하지 못했어요 · 입력한 내용은 그대로예요",
-      });
+      return setToast("저장하지 못했어요 · 입력한 내용은 그대로예요");
     }
     setEditing(undefined);
-    setToast({
-      tone: "success",
-      text: `${next.name}을(를) 저장했어요 · 앱 종 목록에 반영됐어요`,
-    });
+    setToast(`${next.name}을(를) 저장했어요 · 앱 종 목록에 반영됐어요`);
   }
 
   // 숨기기는 확인창을 거치고, 다시 보이기는 바로 저장한다
@@ -67,13 +58,10 @@ export default function SpeciesManager() {
       await setHidden({ id: s.id, hidden });
     } catch {
       // 확인창은 닫지 않아 바로 다시 시도할 수 있다
-      return setToast({
-        tone: "error",
-        text: "저장하지 못했어요 · 다시 시도해 주세요",
-      });
+      return setToast("저장하지 못했어요 · 다시 시도해 주세요");
     }
     setHiding(undefined);
-    setToast({ tone: "success", text: done });
+    setToast(done);
   }
 
   function toggleHidden(s: Species) {
@@ -153,12 +141,8 @@ export default function SpeciesManager() {
       )}
       {toast && (
         // 실패 토스트는 드로어가 열린 채 뜨므로 딤·드로어 위로 올린다
-        <Toast
-          tone={toast.tone}
-          position="top-[1.65625rem] left-211"
-          className="z-30"
-        >
-          {toast.text}
+        <Toast position="top-[1.65625rem] left-211" className="z-30">
+          {toast}
         </Toast>
       )}
     </>
