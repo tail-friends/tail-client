@@ -22,7 +22,10 @@ function Editor({ initial }: { initial: Guide[] }) {
   const [selectedId, setSelectedId] = useState(initial[0].id);
   const [draft, setDraft] = useState<Content>(initial[0].content);
   const [pendingId, setPendingId] = useState<number>();
-  const [toast, setToast] = useState<string>();
+  const [toast, setToast] = useState<{
+    tone: "success" | "error";
+    text: string;
+  }>();
 
   useEffect(() => {
     if (!toast) return;
@@ -41,9 +44,17 @@ function Editor({ initial }: { initial: Guide[] }) {
 
   async function save() {
     // 수정 날짜와 내용은 서버가 저장한 값으로 맞춘다
-    const saved = await saveGuide(selectedId, draft);
-    setGuides((list) => list.map((g) => (g.id === saved.id ? saved : g)));
-    setToast(`${guide.name} 가이드를 저장했어요`);
+    try {
+      const saved = await saveGuide(selectedId, draft);
+      setGuides((list) => list.map((g) => (g.id === saved.id ? saved : g)));
+      setToast({ tone: "success", text: `${guide.name} 가이드를 저장했어요` });
+    } catch {
+      // draft는 건드리지 않아 고친 내용이 그대로 남는다
+      setToast({
+        tone: "error",
+        text: "저장하지 못했어요 · 고친 내용은 그대로예요",
+      });
+    }
   }
 
   const pending = guides.find((g) => g.id === pendingId);
@@ -89,8 +100,8 @@ function Editor({ initial }: { initial: Guide[] }) {
         </Dialog>
       )}
       {toast && (
-        <Toast tone="success" position="top-[1.65625rem] left-211">
-          {toast}
+        <Toast tone={toast.tone} position="top-[1.65625rem] left-211">
+          {toast.text}
         </Toast>
       )}
     </div>
