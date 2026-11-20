@@ -1,7 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 import GuidesManager from "@/features/guides/components/GuidesManager";
-import { guides } from "@/features/guides/data";
 
 export default function GuidesPage() {
   return (
@@ -9,7 +8,7 @@ export default function GuidesPage() {
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <TopBar title="사육 가이드" />
-        <GuidesManager initial={guides} />
+        <GuidesManager />
       </div>
     </div>
   );

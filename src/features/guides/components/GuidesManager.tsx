@@ -1,20 +1,28 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Dialog from "@/components/Dialog";
 import Toast from "@/components/Toast";
+import { fetchGuides } from "../api";
 import { sections, type Content, type Guide, type Section } from "../data";
 import AppCardPreview from "./AppCardPreview";
 import GuideEditor from "./GuideEditor";
 import SpeciesList from "./SpeciesList";
 
-// API 연동 전이라 저장한 내용은 화면 안 상태로만 남는다
-export default function GuidesManager({ initial }: { initial: Guide[] }) {
+export default function GuidesManager() {
+  const { data } = useQuery({ queryKey: ["guides"], queryFn: fetchGuides });
+  // shortcut: 불러오는 중·실패 화면은 시안이 없어 비워 둔다, 시안 나오면 추가
+  return data?.length ? <Editor initial={data} /> : null;
+}
+
+// 저장 API 연동 전이라 저장한 내용은 화면 안 상태로만 남는다
+function Editor({ initial }: { initial: Guide[] }) {
   const [guides, setGuides] = useState(initial);
   const [selectedId, setSelectedId] = useState(initial[0].id);
   const [draft, setDraft] = useState<Content>(initial[0].content);
-  const [pendingId, setPendingId] = useState<string>();
+  const [pendingId, setPendingId] = useState<number>();
   const [toast, setToast] = useState<string>();
 
   useEffect(() => {
@@ -26,7 +34,7 @@ export default function GuidesManager({ initial }: { initial: Guide[] }) {
   const guide = guides.find((g) => g.id === selectedId)!;
   const dirty = sections.some((s) => draft[s] !== guide.content[s]);
 
-  function select(id: string) {
+  function select(id: number) {
     setSelectedId(id);
     setDraft(guides.find((g) => g.id === id)!.content);
     setPendingId(undefined);
