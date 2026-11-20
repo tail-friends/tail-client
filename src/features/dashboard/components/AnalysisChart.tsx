@@ -1,11 +1,18 @@
-import { daily } from "../data";
+import type { Stats } from "../api";
 
-const MAX = 200;
-const ticks = [0, 50, 100, 150, 200];
 const labelIndexes = [0, 4, 9, 14, 19, 24, 29];
 
-// Figma chart · 최근 30일 AI 분석. 막대 높이는 분석 횟수(0~200) 비율, 빨간 부분이 실패
-export default function AnalysisChart() {
+// Figma chart · 최근 30일 AI 분석. 막대 높이는 분석 횟수 비율(축은 200 단위로 늘어남), 빨간 부분이 실패
+export default function AnalysisChart({ stats }: { stats: Stats["daily"] }) {
+  const daily = stats.map(({ date, aiAnalyses, aiFailures }) => {
+    const [, month, day] = date.split("-").map(Number);
+    return { date: `${month}/${day}`, total: aiAnalyses, fail: aiFailures };
+  });
+  const MAX = Math.max(
+    200,
+    Math.ceil(Math.max(...daily.map((d) => d.total)) / 200) * 200,
+  );
+  const ticks = [0, 1, 2, 3, 4].map((i) => (MAX / 4) * i);
   const last = daily.length - 1;
   const today = daily[last];
 
@@ -47,7 +54,9 @@ export default function AnalysisChart() {
                     >
                       <div
                         className="bg-danger absolute inset-x-0 top-0 rounded-t-sm"
-                        style={{ height: `${(fail / total) * 100}%` }}
+                        style={{
+                          height: `${total ? (fail / total) * 100 : 0}%`,
+                        }}
                       />
                       {isToday && <Tooltip {...today} />}
                     </div>
@@ -92,7 +101,8 @@ function Tooltip({
       <div className="glass flex flex-col gap-0.5 rounded-md [--glass-from:0.94] [--glass-to:0.7] px-2.25 py-1.75">
         <p className="text-label">{date} 오늘</p>
         <p className="text-caption text-fg-secondary">
-          분석 {total}회 · 실패 {fail}건 ({((fail / total) * 100).toFixed(1)}%)
+          분석 {total}회 · 실패 {fail}건 (
+          {(total ? (fail / total) * 100 : 0).toFixed(1)}%)
         </p>
       </div>
     </div>
