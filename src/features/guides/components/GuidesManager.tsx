@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Dialog from "@/components/Dialog";
 import Toast from "@/components/Toast";
-import { fetchGuides } from "../api";
+import { fetchGuides, saveGuide } from "../api";
 import { sections, type Content, type Guide, type Section } from "../data";
 import AppCardPreview from "./AppCardPreview";
 import GuideEditor from "./GuideEditor";
@@ -17,7 +17,6 @@ export default function GuidesManager() {
   return data?.length ? <Editor initial={data} /> : null;
 }
 
-// 저장 API 연동 전이라 저장한 내용은 화면 안 상태로만 남는다
 function Editor({ initial }: { initial: Guide[] }) {
   const [guides, setGuides] = useState(initial);
   const [selectedId, setSelectedId] = useState(initial[0].id);
@@ -40,16 +39,10 @@ function Editor({ initial }: { initial: Guide[] }) {
     setPendingId(undefined);
   }
 
-  function save() {
-    // sv-SE 형식이 "2026-10-26"이라 점으로만 바꾸면 "2026.10.26"이 된다
-    const updatedAt = new Date()
-      .toLocaleDateString("sv-SE")
-      .replaceAll("-", ".");
-    setGuides((list) =>
-      list.map((g) =>
-        g.id === selectedId ? { ...g, content: draft, updatedAt } : g,
-      ),
-    );
+  async function save() {
+    // 수정 날짜와 내용은 서버가 저장한 값으로 맞춘다
+    const saved = await saveGuide(selectedId, draft);
+    setGuides((list) => list.map((g) => (g.id === saved.id ? saved : g)));
     setToast(`${guide.name} 가이드를 저장했어요`);
   }
 

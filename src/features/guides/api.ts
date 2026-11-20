@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { Guide, Section } from "./data";
+import { sections, type Content, type Guide, type Section } from "./data";
 
 type GuideResponse = {
   speciesId: number;
@@ -36,4 +36,25 @@ export async function fetchGuides() {
     species.map(({ id }) => get<GuideResponse>(`/species/${id}/guide`)),
   );
   return guides.map(toGuide);
+}
+
+const keys: Record<Section, string> = {
+  습성: "HABIT",
+  먹이: "FEED",
+  환경: "ENV",
+  건강: "HEALTH",
+};
+
+// 보낸 섹션으로 가이드 전체가 바뀐다. 빈 칸은 보내지 않아 서버에서 지워진다
+export async function saveGuide(id: number, content: Content) {
+  const body = {
+    sections: sections
+      .filter((s) => content[s].trim())
+      .map((s) => ({ key: keys[s], body: content[s] })),
+  };
+  const res = await api.put<{ data: GuideResponse }>(
+    `/admin/species/${id}/guide`,
+    body,
+  );
+  return toGuide(res.data.data);
 }
