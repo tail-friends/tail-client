@@ -86,6 +86,13 @@ export async function saveSpecies(
   return toSpecies(data.data);
 }
 
+// 숨기기는 DELETE(삭제 대신 숨김, 204), 다시 보이기는 PATCH hidden=false
+export async function setHidden(id: number, hidden: boolean) {
+  await (hidden
+    ? api.delete(`/admin/species/${id}`)
+    : api.patch(`/admin/species/${id}`, { hidden: false }));
+}
+
 // 이름 중복 같은 입력 오류(400)면 서버 안내문을, 아니면 undefined
 export function inputError(error: unknown) {
   if (!isAxiosError(error) || error.response?.status !== 400) return;

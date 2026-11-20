@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getSpecies, saveSpecies } from "./api";
+import { getSpecies, saveSpecies, setHidden } from "./api";
 import type { Species } from "./components/SpeciesTable";
 
 export const speciesKey = ["admin", "species"];
@@ -28,6 +28,18 @@ export function useSaveSpecies() {
         list?.some((s) => s.id === saved.id)
           ? list.map((s) => (s.id === saved.id ? saved : s))
           : list && [...list, saved],
+      ),
+  });
+}
+
+export function useSetHidden() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, hidden }: { id: number; hidden: boolean }) =>
+      setHidden(id, hidden),
+    onSuccess: (_, { id, hidden }) =>
+      queryClient.setQueryData<Species[]>(speciesKey, (list) =>
+        list?.map((s) => (s.id === id ? { ...s, hidden } : s)),
       ),
   });
 }

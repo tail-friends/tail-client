@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { sent, setServer } from "@/test/fakeServer";
-import { getSpecies, inputError, saveSpecies } from "./api";
+import { getSpecies, inputError, saveSpecies, setHidden } from "./api";
 
 const leopard = {
   id: 1,
@@ -90,4 +90,16 @@ test("400이면 서버 안내문을 입력 오류로 쓰고, 다른 실패는 �
 
   setServer(() => [500, body]);
   expect(inputError(await failure())).toBeUndefined();
+});
+
+test("숨기기는 DELETE, 다시 보이기는 hidden=false PATCH로 보낸다", async () => {
+  setServer(() => [204, ""]);
+
+  await setHidden(1, true);
+  await setHidden(1, false);
+
+  const [hide, show] = sent("/admin/species/1");
+  expect(hide.method).toBe("delete");
+  expect(show.method).toBe("patch");
+  expect(JSON.parse(show.data)).toEqual({ hidden: false });
 });

@@ -1,11 +1,10 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
 import { inputError } from "../api";
-import { speciesKey, useSaveSpecies, useSpecies } from "../queries";
+import { useSaveSpecies, useSetHidden, useSpecies } from "../queries";
 import HideDialog from "./HideDialog";
 import SpeciesDrawer from "./SpeciesDrawer";
 import SpeciesSearch from "./SpeciesSearch";
@@ -18,13 +17,7 @@ type Editing = { target?: Species; draft: Partial<Species>; error?: string };
 export default function SpeciesManager() {
   const { data: species } = useSpecies();
   const { mutateAsync: saveSpecies, isPending: saving } = useSaveSpecies();
-  const queryClient = useQueryClient();
-  // shortcut: 숨기기는 아직 목록 캐시만 바꾼다, 숨기기 API를 붙이면 서버 응답으로 바꾼다
-  const setSpecies = (update: (list: Species[]) => Species[]) =>
-    queryClient.setQueryData<Species[]>(
-      speciesKey,
-      (list) => list && update(list),
-    );
+  const { mutateAsync: setHidden, isPending: hiddenPending } = useSetHidden();
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Editing>();
   const [hiding, setHiding] = useState<Species>();
@@ -44,10 +37,6 @@ export default function SpeciesManager() {
 
   const q = query.trim();
   const rows = q ? species.filter((s) => s.name.includes(q)) : species;
-
-  function replace(target: Species, next: Species) {
-    setSpecies((list) => list.map((s) => (s.id === target.id ? next : s)));
-  }
 
   async function save(next: Omit<Species, "id">) {
     // 저장 중에 다시 누르면 요청이 두 번 가지 않게 막는다
@@ -71,20 +60,34 @@ export default function SpeciesManager() {
     });
   }
 
+  // 숨기기는 확인창을 거치고, 다시 보이기는 바로 저장한다
+  async function changeHidden(s: Species, hidden: boolean, done: string) {
+    if (hiddenPending) return;
+    try {
+      await setHidden({ id: s.id, hidden });
+    } catch {
+      // 확인창은 닫지 않아 바로 다시 시도할 수 있다
+      return setToast({
+        tone: "error",
+        text: "저장하지 못했어요 · 다시 시도해 주세요",
+      });
+    }
+    setHiding(undefined);
+    setToast({ tone: "success", text: done });
+  }
+
   function toggleHidden(s: Species) {
     if (!s.hidden) return setHiding(s);
-    replace(s, { ...s, hidden: false });
-    setToast({ tone: "success", text: `${s.name}을(를) 다시 보이게 했어요` });
+    changeHidden(s, false, `${s.name}을(를) 다시 보이게 했어요`);
   }
 
   function hide() {
     const s = hiding!;
-    replace(s, { ...s, hidden: true });
-    setHiding(undefined);
-    setToast({
-      tone: "success",
-      text: `${s.name}을(를) 숨겼어요 · 앱 새 등록 목록에서 빠졌어요`,
-    });
+    changeHidden(
+      s,
+      true,
+      `${s.name}을(를) 숨겼어요 · 앱 새 등록 목록에서 빠졌어요`,
+    );
   }
 
   return (
