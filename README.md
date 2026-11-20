@@ -23,9 +23,13 @@ npm run dev        # http://localhost:3000
 
 `npm run dev`는 `.env.development`의 값을 자동으로 씁니다. 다른 주소를 쓰려면 `.env.local`에 같은 이름으로 덮어씁니다. 배포 환경에서는 직접 설정해야 합니다.
 
-| 이름                  | 설명                                               |
-| --------------------- | -------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | 서버 API 주소 (예: `http://localhost:8080/api/v1`) |
+| 이름                           | 설명                                                          |
+| ------------------------------ | ------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`          | 서버 API 주소 (예: `http://localhost:8080/api/v1`)            |
+| `NEXT_PUBLIC_KAKAO_CLIENT_ID`  | 카카오 REST API 키. 서버의 `KAKAO_CLIENT_ID`와 같은 값        |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | 구글 OAuth 클라이언트 ID. 서버의 `GOOGLE_CLIENT_ID`와 같은 값 |
+
+소셜 로그인은 `<웹 주소>/login`으로 돌아오므로 카카오 디벨로퍼스와 구글 클라우드 콘솔의 Redirect URI에 등록해야 합니다. (예: `http://localhost:3000/login`)
 
 서버 통신은 `src/lib/api.ts`의 axios 인스턴스와 TanStack Query(`src/app/providers.tsx`)를 사용합니다.
 
