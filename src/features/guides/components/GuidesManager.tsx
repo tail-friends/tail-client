@@ -1,26 +1,26 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Dialog from "@/components/Dialog";
 import Toast from "@/components/Toast";
-import { fetchGuides, saveGuide } from "../api";
 import { sections, type Content, type Guide, type Section } from "../data";
+import { useGuides, useSaveGuide } from "../queries";
 import AppCardPreview from "./AppCardPreview";
 import GuideEditor from "./GuideEditor";
 import SpeciesList from "./SpeciesList";
 
 export default function GuidesManager() {
-  const { data } = useQuery({ queryKey: ["guides"], queryFn: fetchGuides });
+  const { data } = useGuides();
   // shortcut: 불러오는 중·실패 화면은 시안이 없어 비워 둔다, 시안 나오면 추가
-  return data?.length ? <Editor initial={data} /> : null;
+  return data?.length ? <Editor guides={data} /> : null;
 }
 
-function Editor({ initial }: { initial: Guide[] }) {
-  const [guides, setGuides] = useState(initial);
-  const [selectedId, setSelectedId] = useState(initial[0].id);
-  const [draft, setDraft] = useState<Content>(initial[0].content);
+// 목록은 쿼리 캐시 값을 그대로 쓰고, 고치는 중인 내용만 draft로 따로 둔다
+function Editor({ guides }: { guides: Guide[] }) {
+  const { mutateAsync, isPending } = useSaveGuide();
+  const [selectedId, setSelectedId] = useState(guides[0].id);
+  const [draft, setDraft] = useState<Content>(guides[0].content);
   const [pendingId, setPendingId] = useState<number>();
   const [toast, setToast] = useState<{
     tone: "success" | "error";
@@ -43,10 +43,11 @@ function Editor({ initial }: { initial: Guide[] }) {
   }
 
   async function save() {
-    // 수정 날짜와 내용은 서버가 저장한 값으로 맞춘다
+    // 저장 중에 다시 누르면 요청이 두 번 가지 않게 막는다
+    if (isPending) return;
+    // 수정 날짜와 내용은 서버가 저장한 값으로 맞춘다 (useSaveGuide가 캐시를 바꾼다)
     try {
-      const saved = await saveGuide(selectedId, draft);
-      setGuides((list) => list.map((g) => (g.id === saved.id ? saved : g)));
+      await mutateAsync({ id: selectedId, content: draft });
       setToast({ tone: "success", text: `${guide.name} 가이드를 저장했어요` });
     } catch {
       // draft는 건드리지 않아 고친 내용이 그대로 남는다
