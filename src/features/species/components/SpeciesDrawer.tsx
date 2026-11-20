@@ -7,7 +7,7 @@ import Field from "./Field";
 import SegmentField from "./SegmentField";
 import { homes, shapes, type Species } from "./SpeciesTable";
 
-type Errors = Partial<Record<"name" | "feed" | Zone, string>>;
+type Errors = Partial<Record<"name" | "feed" | "molt" | Zone, string>>;
 type Zone = (typeof zones)[number]["key"];
 
 // 온습도 칸. 서버 요청 필드(hotMin·hotMax …)와 이름을 맞춘다
@@ -84,11 +84,18 @@ export default function SpeciesDrawer({
     const values = Object.fromEntries(
       Object.entries(env).map(([k, v]) => [k, toNumber(v)]),
     ) as Record<EnvKey, number | undefined>;
+    const moltDays = toNumber(molt);
+    // 서버 수정(PATCH)은 빈 값을 "안 바꿈"으로 받아, 이미 저장된 값은 비워도 지워지지 않는다
+    const cleared = (key: EnvKey | "moltDays", value?: number) =>
+      species[key] !== undefined && value === undefined;
+    const keepSaved = "저장된 값은 비울 수 없어요";
+    if (cleared("moltDays", moltDays)) next.molt = keepSaved;
     for (const z of zones) {
       const min = values[z.min];
       const max = values[z.max];
       if (min !== undefined && max !== undefined && min > max)
         next[z.key] = "최소가 최대보다 커요";
+      if (cleared(z.min, min) || cleared(z.max, max)) next[z.key] = keepSaved;
     }
     if (
       [values.humidityMin, values.humidityMax].some(
@@ -106,7 +113,7 @@ export default function SpeciesDrawer({
       spike,
       home,
       hidden: species.hidden ?? false,
-      moltDays: toNumber(molt),
+      moltDays,
       ...values,
     });
   }
@@ -143,6 +150,7 @@ export default function SpeciesDrawer({
               placeholder="예: 30"
               type="number"
               value={molt}
+              error={errors.molt}
               onChange={setMolt}
             />
           </div>
