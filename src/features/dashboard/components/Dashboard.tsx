@@ -1,6 +1,6 @@
 "use client";
 
-import { useStats } from "../api";
+import { useStats } from "../queries";
 import AnalysisChart from "./AnalysisChart";
 import SpeciesCountPanel from "./SpeciesCountPanel";
 import StatCard from "./StatCard";
