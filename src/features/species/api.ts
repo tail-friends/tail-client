@@ -56,7 +56,7 @@ export async function getSpecies() {
   return data.data.species.map(toSpecies);
 }
 
-// 숨김은 따로 바꾸므로(hideSpecies) 보내지 않는다. 빈 값은 JSON에서 빠져, 수정할 때 서버 값이 그대로 남는다
+// 숨김은 따로 바꾸므로(setHidden) 보내지 않는다. 빈 값은 JSON에서 빠져, 수정할 때 서버 값이 그대로 남는다
 function toRequest(s: Omit<Species, "id">) {
   return {
     name: s.name,
