@@ -64,7 +64,7 @@ export default function Dashboard() {
       ) : (
         data && (
           <div className="flex min-h-0 flex-1 gap-4">
-            <AnalysisChart />
+            <AnalysisChart stats={data.daily} />
             <SpeciesCountPanel />
           </div>
         )
