@@ -5,17 +5,27 @@ import Button from "@/components/Button";
 import Dialog from "@/components/Dialog";
 import Toast from "@/components/Toast";
 import { sections, type Content, type Guide, type Section } from "../data";
+import { useGuides, useSaveGuide } from "../queries";
 import AppCardPreview from "./AppCardPreview";
 import GuideEditor from "./GuideEditor";
 import SpeciesList from "./SpeciesList";
 
-// API 연동 전이라 저장한 내용은 화면 안 상태로만 남는다
-export default function GuidesManager({ initial }: { initial: Guide[] }) {
-  const [guides, setGuides] = useState(initial);
-  const [selectedId, setSelectedId] = useState(initial[0].id);
-  const [draft, setDraft] = useState<Content>(initial[0].content);
-  const [pendingId, setPendingId] = useState<string>();
-  const [toast, setToast] = useState<string>();
+export default function GuidesManager() {
+  const { data } = useGuides();
+  // shortcut: 불러오는 중·실패 화면은 시안이 없어 비워 둔다, 시안 나오면 추가
+  return data?.length ? <Editor guides={data} /> : null;
+}
+
+// 목록은 쿼리 캐시 값을 그대로 쓰고, 고치는 중인 내용만 draft로 따로 둔다
+function Editor({ guides }: { guides: Guide[] }) {
+  const { mutateAsync, isPending } = useSaveGuide();
+  const [selectedId, setSelectedId] = useState(guides[0].id);
+  const [draft, setDraft] = useState<Content>(guides[0].content);
+  const [pendingId, setPendingId] = useState<number>();
+  const [toast, setToast] = useState<{
+    tone: "success" | "error";
+    text: string;
+  }>();
 
   useEffect(() => {
     if (!toast) return;
@@ -26,23 +36,26 @@ export default function GuidesManager({ initial }: { initial: Guide[] }) {
   const guide = guides.find((g) => g.id === selectedId)!;
   const dirty = sections.some((s) => draft[s] !== guide.content[s]);
 
-  function select(id: string) {
+  function select(id: number) {
     setSelectedId(id);
     setDraft(guides.find((g) => g.id === id)!.content);
     setPendingId(undefined);
   }
 
-  function save() {
-    // sv-SE 형식이 "2026-10-26"이라 점으로만 바꾸면 "2026.10.26"이 된다
-    const updatedAt = new Date()
-      .toLocaleDateString("sv-SE")
-      .replaceAll("-", ".");
-    setGuides((list) =>
-      list.map((g) =>
-        g.id === selectedId ? { ...g, content: draft, updatedAt } : g,
-      ),
-    );
-    setToast(`${guide.name} 가이드를 저장했어요`);
+  async function save() {
+    // 저장 중에 다시 누르면 요청이 두 번 가지 않게 막는다
+    if (isPending) return;
+    // 수정 날짜와 내용은 서버가 저장한 값으로 맞춘다 (useSaveGuide가 캐시를 바꾼다)
+    try {
+      await mutateAsync({ id: selectedId, content: draft });
+      setToast({ tone: "success", text: `${guide.name} 가이드를 저장했어요` });
+    } catch {
+      // draft는 건드리지 않아 고친 내용이 그대로 남는다
+      setToast({
+        tone: "error",
+        text: "저장하지 못했어요 · 고친 내용은 그대로예요",
+      });
+    }
   }
 
   const pending = guides.find((g) => g.id === pendingId);
@@ -88,8 +101,8 @@ export default function GuidesManager({ initial }: { initial: Guide[] }) {
         </Dialog>
       )}
       {toast && (
-        <Toast tone="success" position="top-[1.65625rem] left-211">
-          {toast}
+        <Toast tone={toast.tone} position="top-[1.65625rem] left-211">
+          {toast.text}
         </Toast>
       )}
     </div>

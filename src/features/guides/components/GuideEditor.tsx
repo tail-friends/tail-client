@@ -42,6 +42,8 @@ export default function GuideEditor({
           <textarea
             value={content[section]}
             onChange={(e) => onChange(section, e.target.value)}
+            // 서버가 섹션마다 2000자까지만 받는다
+            maxLength={2000}
             placeholder={`${section} 내용을 적어 주세요`}
             className={`text-body placeholder:text-fg-tertiary focus:border-primary focus:shadow-[inset_0_0_0_0.03125rem_var(--color-primary)] h-18 resize-none rounded-md border bg-white px-3.5 py-3 outline-none border-line`}
           />
