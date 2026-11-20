@@ -6,7 +6,8 @@ import SpeciesCountPanel from "./SpeciesCountPanel";
 import StatCard from "./StatCard";
 import StatsError from "./StatsError";
 
-// Figma W-2 본문. 불러오는 중이거나 실패하면 카드 값은 "—"
+// Figma W-2 본문. 불러오는 중이거나 실패하면 카드 값은 "—".
+// 이미 받은 값이 있으면 자동 갱신이 실패해도 그 값을 계속 보여 준다
 export default function Dashboard() {
   const { data, isError, refetch } = useStats();
   const today = data?.daily.at(-1);
@@ -59,7 +60,7 @@ export default function Dashboard() {
           />
         ))}
       </div>
-      {isError ? (
+      {isError && !data ? (
         <StatsError onRetry={() => refetch()} />
       ) : (
         data && (
