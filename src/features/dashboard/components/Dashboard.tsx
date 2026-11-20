@@ -8,7 +8,7 @@ import StatsError from "./StatsError";
 
 // Figma W-2 본문. 불러오는 중이거나 실패하면 카드 값은 "—"
 export default function Dashboard() {
-  const { data, isError } = useStats();
+  const { data, isError, refetch } = useStats();
   const today = data?.daily.at(-1);
   const average =
     data &&
@@ -60,7 +60,7 @@ export default function Dashboard() {
         ))}
       </div>
       {isError ? (
-        <StatsError />
+        <StatsError onRetry={() => refetch()} />
       ) : (
         data && (
           <div className="flex min-h-0 flex-1 gap-4">
