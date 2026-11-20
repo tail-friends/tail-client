@@ -1,11 +1,4 @@
 // 퍼블리싱용 고정 데이터 (Figma W-2). API 연동 때 교체한다
-export const stats = [
-  { label: "가입자 수", value: "1,284", note: "어제보다 +32" },
-  { label: "등록 개체 수", value: "2,031", note: "어제보다 +47" },
-  { label: "오늘 AI 분석 횟수", value: "146", note: "최근 30일 평균 118" },
-  { label: "AI 분석 실패율 (오늘)", value: "2.7%", note: "실패 4건" },
-];
-
 // 9/25부터 30일, [분석 횟수, 그중 실패]
 const counts = [
   [92, 9],
@@ -57,5 +50,3 @@ export const speciesCounts = [
   { name: "육지 거북", count: 35 },
   { name: "킹 스네이크", count: 18 },
 ];
-
-export const asOf = "2026.10.24 기준 · 10분마다 갱신";
