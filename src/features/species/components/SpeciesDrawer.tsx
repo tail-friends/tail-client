@@ -52,7 +52,7 @@ export default function SpeciesDrawer({
   title: string;
   species: Partial<Species>;
   isDuplicate: (name: string) => boolean;
-  onSave: (s: Species) => void;
+  onSave: (s: Omit<Species, "id">) => void;
   onClose: () => void;
 }) {
   const [name, setName] = useState(species.name ?? "");

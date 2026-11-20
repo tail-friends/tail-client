@@ -1,8 +1,10 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
+import { speciesKey, useSpecies } from "../queries";
 import HideDialog from "./HideDialog";
 import SpeciesDrawer from "./SpeciesDrawer";
 import SpeciesSearch from "./SpeciesSearch";
@@ -11,9 +13,15 @@ import SpeciesTable, { type Species } from "./SpeciesTable";
 // 추가는 빈 값(이름만 채울 수도 있음), 수정은 고르는 종. 둘 다 같은 드로어를 쓴다
 type Editing = { target?: Species; draft: Partial<Species> };
 
-// API 연동 전이라 목록은 화면 안 상태로만 바뀐다
-export default function SpeciesManager({ initial }: { initial: Species[] }) {
-  const [species, setSpecies] = useState(initial);
+export default function SpeciesManager() {
+  const { data: species } = useSpecies();
+  const queryClient = useQueryClient();
+  // shortcut: 추가·수정·숨기기는 아직 목록 캐시만 바꾼다, 저장 API를 붙이면 서버 응답으로 바꾼다
+  const setSpecies = (update: (list: Species[]) => Species[]) =>
+    queryClient.setQueryData<Species[]>(
+      speciesKey,
+      (list) => list && update(list),
+    );
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Editing>();
   const [hiding, setHiding] = useState<Species>();
@@ -25,17 +33,20 @@ export default function SpeciesManager({ initial }: { initial: Species[] }) {
     return () => clearTimeout(id);
   }, [toast]);
 
+  // shortcut: 불러오는 중·실패 화면은 시안이 없어 비워 둔다 (가이드 화면과 같음), 시안 나오면 추가
+  if (!species) return null;
+
   const q = query.trim();
   const rows = q ? species.filter((s) => s.name.includes(q)) : species;
 
   function replace(target: Species, next: Species) {
-    setSpecies((list) => list.map((s) => (s === target ? next : s)));
+    setSpecies((list) => list.map((s) => (s.id === target.id ? next : s)));
   }
 
-  function save(next: Species) {
+  function save(next: Omit<Species, "id">) {
     const { target } = editing!;
-    if (target) replace(target, next);
-    else setSpecies((list) => [...list, next]);
+    if (target) replace(target, { ...next, id: target.id });
+    else setSpecies((list) => [...list, { ...next, id: 0 }]);
     setEditing(undefined);
     setToast(`${next.name}을(를) 저장했어요 · 앱 종 목록에 반영됐어요`);
   }
@@ -97,7 +108,7 @@ export default function SpeciesManager({ initial }: { initial: Species[] }) {
           }
           species={editing.draft}
           isDuplicate={(name) =>
-            species.some((s) => s !== editing.target && s.name === name)
+            species.some((s) => s.id !== editing.target?.id && s.name === name)
           }
           onSave={save}
           onClose={() => setEditing(undefined)}

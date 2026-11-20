@@ -1,9 +1,10 @@
 import Chip from "@/components/Chip";
 
 export const shapes = ["gecko", "lizard", "snake", "turtle"] as const;
-export const homes = ["사막", "열대우림", "바위 협곡", "물가"] as const;
+export const homes = ["사막", "열대우림", "바위 협곡", "밤", "물가"] as const;
 
 export type Species = {
+  id: number;
   name: string;
   feedDays: number;
   shape: (typeof shapes)[number];
