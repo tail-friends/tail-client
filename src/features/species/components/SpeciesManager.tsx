@@ -122,6 +122,7 @@ export default function SpeciesManager() {
           }
           species={editing.draft}
           error={editing.error}
+          saving={saving}
           onEdit={() =>
             setEditing((e) => (e?.error ? { ...e, error: undefined } : e))
           }
@@ -138,6 +139,7 @@ export default function SpeciesManager() {
           message={
             "이 종을 키우는 개체는 그대로 있어요.\n앱의 새 등록 종 목록에서만 빠지고, 언제든 다시 보이게 할 수 있어요."
           }
+          pending={hiddenPending}
           onCancel={() => setHiding(undefined)}
           onConfirm={hide}
         />

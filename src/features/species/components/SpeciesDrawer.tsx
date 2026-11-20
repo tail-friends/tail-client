@@ -46,6 +46,7 @@ export default function SpeciesDrawer({
   title,
   species,
   error,
+  saving,
   onEdit,
   isDuplicate,
   onSave,
@@ -54,6 +55,7 @@ export default function SpeciesDrawer({
   title: string;
   species: Partial<Species>;
   error?: string;
+  saving: boolean;
   onEdit: () => void;
   isDuplicate: (name: string) => boolean;
   onSave: (s: Omit<Species, "id">) => void;
@@ -209,7 +211,9 @@ export default function SpeciesDrawer({
             >
               취소
             </button>
-            <Button onClick={save}>저장</Button>
+            <Button onClick={save} disabled={saving}>
+              저장
+            </Button>
           </div>
         </aside>
       </div>
