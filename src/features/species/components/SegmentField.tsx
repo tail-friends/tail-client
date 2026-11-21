@@ -7,7 +7,7 @@ export default function SegmentField<T extends string>({
 }: {
   label: string;
   options: readonly T[];
-  value: T;
+  value?: T;
   onChange: (value: T) => void;
 }) {
   return (

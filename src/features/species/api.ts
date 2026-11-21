@@ -18,11 +18,11 @@ type SpeciesResponse = {
 };
 
 // 서버 사육장 키(소문자로 내려온다). 읽을 때와 저장할 때 모두 이 표로 바꾼다
-const homeKeys: Record<Species["home"], string> = {
+const homeKeys: Record<NonNullable<Species["home"]>, string> = {
   사막: "desert",
   열대우림: "forest",
   "바위 협곡": "rock",
-  밤: "night",
+  달밤: "night",
   물가: "pond",
 };
 
@@ -36,7 +36,7 @@ function toSpecies(r: SpeciesResponse): Species {
     feedDays: r.feedIntervalDays,
     shape: r.shape,
     spike: r.spiky,
-    home: homes.find((h) => homeKeys[h] === r.defaultHome)!,
+    home: homes.find((h) => homeKeys[h] === r.defaultHome),
     hidden: r.hidden,
     moltDays: value(r.shedIntervalDays),
     hotMin: value(hot?.min),
@@ -70,7 +70,7 @@ function toRequest(s: Omit<Species, "id">) {
     coolMax: s.coolMax,
     humidityMin: s.humidityMin,
     humidityMax: s.humidityMax,
-    defaultHome: homeKeys[s.home],
+    defaultHome: s.home && homeKeys[s.home],
   };
 }
 

@@ -66,7 +66,9 @@ export default function SpeciesDrawer({
   const [molt, setMolt] = useState(species.moltDays?.toString() ?? "");
   const [shape, setShape] = useState(species.shape ?? shapes[0]);
   const [spike, setSpike] = useState(species.spike ?? false);
-  const [home, setHome] = useState(species.home ?? homes[0]);
+  const [home, setHome] = useState(
+    species.id === undefined ? homes[0] : species.home,
+  );
   const [env, setEnv] = useState(
     () =>
       Object.fromEntries(

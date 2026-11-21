@@ -41,6 +41,22 @@ test("서버 종을 화면 형식으로 바꾸고 비어 있는 값은 undefined
   ]);
 });
 
+test("서버가 모르는 사육장 키를 보내면 home을 비워 두고, 저장할 때 defaultHome을 보내지 않는다", async () => {
+  setServer(() => [
+    200,
+    { data: { species: [{ ...leopard, defaultHome: "cave" }] } },
+  ]);
+  const [species] = await getSpecies();
+  expect(species.home).toBeUndefined();
+
+  setServer(() => [200, { data: leopard }]);
+  await saveSpecies(1, species);
+
+  expect(JSON.parse(sent("/admin/species/1")[0].data)).not.toHaveProperty(
+    "defaultHome",
+  );
+});
+
 const input = {
   name: "레오파드 게코",
   feedDays: 4,
