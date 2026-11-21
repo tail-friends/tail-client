@@ -46,6 +46,11 @@ jobs:
           else
             tag="sha-${GITHUB_SHA::7}"
           fi
+          # 이 값은 ssh 명령에 그대로 들어가므로 정해진 형식만 허용한다
+          if ! [[ "$tag" =~ ^(sha-[0-9a-f]{7}|main)$ ]]; then
+            echo "::error::이미지 태그 형식이 올바르지 않습니다 (sha-xxxxxxx 또는 main)"
+            exit 1
+          fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "배포할 이미지: $tag"
 
