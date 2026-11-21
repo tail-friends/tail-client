@@ -1,7 +1,7 @@
 import Chip from "@/components/Chip";
 
 export const shapes = ["gecko", "lizard", "snake", "turtle"] as const;
-export const homes = ["사막", "열대우림", "바위 협곡", "밤", "물가"] as const;
+export const homes = ["사막", "열대우림", "바위 협곡", "달밤", "물가"] as const;
 
 export type Species = {
   id: number;
@@ -9,7 +9,8 @@ export type Species = {
   feedDays: number;
   shape: (typeof shapes)[number];
   spike: boolean;
-  home: (typeof homes)[number];
+  // 서버에 새 사육장 키가 생겨 모르는 값이면 비워 둔다 (저장해도 서버 값이 그대로 남는다)
+  home?: (typeof homes)[number];
   hidden: boolean;
   moltDays?: number;
   hotMin?: number;
@@ -103,7 +104,9 @@ export default function SpeciesTable({
               <Cell width="w-22.5">{s.feedDays}일</Cell>
               <Cell width="w-37.5">{s.shape}</Cell>
               <Cell width="w-15">{s.spike ? "등·턱" : "—"}</Cell>
-              <Cell width="w-27.5">{s.home}</Cell>
+              <Cell width="w-27.5" muted={s.home === undefined}>
+                {s.home ?? "미입력"}
+              </Cell>
               <Cell width="w-22.5" muted={s.moltDays === undefined}>
                 {s.moltDays === undefined ? "미입력" : `${s.moltDays}일`}
               </Cell>
