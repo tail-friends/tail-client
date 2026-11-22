@@ -11,7 +11,6 @@ const assign = vi.fn();
 const ORIGIN = "http://admin.test";
 
 beforeEach(() => {
-  localStorage.clear();
   sessionStorage.clear();
   vi.stubGlobal("location", {
     assign,
@@ -30,7 +29,7 @@ afterEach(() => {
 function serverWithRole(role: "ADMIN" | "KEEPER" | "ME_FAILS") {
   setServer((config) => {
     if (config.url === "/auth/oauth/callback")
-      return [200, { data: { accessToken: "a1", refreshToken: "r1" } }];
+      return [200, { data: { accessToken: "a1" } }];
     if (config.url === "/auth/me")
       return role === "ME_FAILS"
         ? [500, {}]
@@ -93,7 +92,6 @@ test("내 정보를 못 불러오면 토큰을 지우고 실패한다", async ()
   await expect(finishLogin("code-1", state)).rejects.toThrow();
 
   expect(tokens.access).toBeNull();
-  expect(tokens.refresh).toBeNull();
 });
 
 test("state가 다르면 서버에 보내지 않고 실패한다", async () => {
