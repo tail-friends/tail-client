@@ -70,6 +70,8 @@ api.interceptors.response.use(undefined, async (error) => {
     )
       throw error;
     signOut();
+    // 로그아웃은 만료 화면 없이 호출한 쪽이 마무리한다 (사용자가 직접 나간 것이고, 관리자 아님 안내를 덮지 않는다)
+    if (config.url === "/auth/logout") throw error;
     return leave(loginHref("expired"));
   }
   return api(config);

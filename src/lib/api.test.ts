@@ -96,6 +96,15 @@ test("액세스 토큰이 만료돼 로그아웃이 401이면 재발급한 뒤 �
   expect(authOf("/auth/logout")).toEqual(["Bearer old", "Bearer new"]);
 });
 
+test("로그아웃 중 재발급까지 401이면 만료 화면으로 보내지 않고 에러를 던진다", async () => {
+  setServer(() => [401, {}]);
+
+  await expect(api.post("/auth/logout")).rejects.toBeInstanceOf(AxiosError);
+
+  expect(assign).not.toHaveBeenCalled();
+  expect(tokens.access).toBeNull();
+});
+
 test("새로고침해 액세스 토큰이 없어도 첫 401에서 쿠키로 재발급해 복구한다", async () => {
   tokens.access = null;
   setServer(reissueOk);
