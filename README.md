@@ -18,14 +18,19 @@ npm run dev        # http://localhost:3000
 | `npm run lint`      | ESLint                                    |
 | `npm run format`    | Prettier로 포맷 (`format:check`는 검사만) |
 | `npm run typecheck` | 라우트 타입 생성 + `tsc`                  |
+| `npm test`          | Vitest 테스트 (`*.test.ts`)               |
 
 ## 환경 변수
 
 `npm run dev`는 `.env.development`의 값을 자동으로 씁니다. 다른 주소를 쓰려면 `.env.local`에 같은 이름으로 덮어씁니다. 배포 환경에서는 직접 설정해야 합니다.
 
-| 이름                  | 설명                                               |
-| --------------------- | -------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | 서버 API 주소 (예: `http://localhost:8080/api/v1`) |
+| 이름                           | 설명                                                          |
+| ------------------------------ | ------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`          | 서버 API 주소 (예: `http://localhost:8080/api/v1`)            |
+| `NEXT_PUBLIC_KAKAO_CLIENT_ID`  | 카카오 REST API 키. 서버의 `KAKAO_CLIENT_ID`와 같은 값        |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | 구글 OAuth 클라이언트 ID. 서버의 `GOOGLE_CLIENT_ID`와 같은 값 |
+
+소셜 로그인은 `<웹 주소>/login`으로 돌아오므로 카카오 디벨로퍼스와 구글 클라우드 콘솔의 Redirect URI에 등록해야 합니다. (예: `http://localhost:3000/login`)
 
 서버 통신은 `src/lib/api.ts`의 axios 인스턴스와 TanStack Query(`src/app/providers.tsx`)를 사용합니다.
 
@@ -41,7 +46,10 @@ src/
       components/ # 이 도메인에서만 쓰는 컴포넌트
   components/     # 여러 도메인이 같이 쓰는 UI
   lib/            # 공용 설정 (api.ts: axios 인스턴스)
+  test/           # 테스트 도우미 (fakeServer.ts: axios 가짜 서버)
 ```
+
+- 테스트는 대상 파일 옆에 `*.test.ts`로 둡니다.
 
 - 한 도메인에서만 쓰면 `features/<도메인>`, 두 곳 이상에서 쓰면 `components/`로 옮깁니다.
 - 페이지 경로는 디자인이 나오면 잡습니다.

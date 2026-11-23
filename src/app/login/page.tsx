@@ -4,6 +4,7 @@ import { buttonClass } from "@/components/Button";
 import Toast from "@/components/Toast";
 import LoginAlert from "@/features/auth/components/LoginAlert";
 import LoginCard from "@/features/auth/components/LoginCard";
+import OAuthCallback from "@/features/auth/components/OAuthCallback";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -16,11 +17,12 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
   );
 }
 
-// ?error=forbidden(W-1a) | failed(W-1b) | expired(W-E1), 없으면 W-1
+// ?error=forbidden(W-1a) | failed(W-1b) | expired(W-E1), 없으면 W-1.
+// ?state는 소셜 로그인에서 돌아온 것이라 W-1을 보여 주며 로그인을 마친다 (취소하면 code 없이 온다)
 async function LoginContent({
   searchParams,
 }: Pick<PageProps<"/login">, "searchParams">) {
-  const { error } = await searchParams;
+  const { error, code, state } = await searchParams;
 
   return (
     <>
@@ -65,6 +67,12 @@ async function LoginContent({
           </>
         )}
       </LoginCard>
+      {typeof state === "string" && (
+        <OAuthCallback
+          code={typeof code === "string" ? code : undefined}
+          state={state}
+        />
+      )}
       {error === "failed" && (
         <Toast>로그인하지 못했어요 · 다시 시도해 주세요</Toast>
       )}

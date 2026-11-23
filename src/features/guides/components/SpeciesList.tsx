@@ -7,8 +7,8 @@ export default function SpeciesList({
   onSelect,
 }: {
   guides: Guide[];
-  selectedId: string;
-  onSelect: (id: string) => void;
+  selectedId: number;
+  onSelect: (id: number) => void;
 }) {
   return (
     <section className="glass flex w-60 shrink-0 flex-col gap-1 rounded-xl [--glass-angle:107deg] [--glass-from:0.78] [--glass-to:0.4] px-3 py-4.5">
