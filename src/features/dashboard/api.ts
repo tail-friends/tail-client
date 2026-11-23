@@ -11,6 +11,8 @@ export type Stats = {
     aiAnalyses: number;
     aiFailures: number;
   }[];
+  // 개체 많은 순으로 정렬되어 옴. 직접 입력한 종은 speciesId null, name "직접 입력"
+  speciesCounts: { speciesId: number | null; name: string; count: number }[];
 };
 
 export async function getStats() {
