@@ -25,12 +25,14 @@ sudo mkdir -p /opt/tail-client
 sudo chown deploy:deploy /opt/tail-client
 ```
 
-방화벽에서 3001 포트를 연다. (서버의 3000은 tail-server의 그라파나가 127.0.0.1에서 쓰고 있어 웹은 3001로 연다.)
+웹은 서버(tail-server)의 caddy가 HTTPS로 받아 3001로 넘긴다(tail-server `docs/deploy.md` 1-6). 방화벽에서 3001은 열지 않는다. (서버의 3000은 tail-server의 그라파나가 127.0.0.1에서 쓰고 있어 웹은 3001로 연다.)
 
-웹의 origin을 서버의 CORS에 추가한다. `/opt/tail-server/.env`의 `CORS_ALLOWED_ORIGINS`에 `http://<서버 주소>:3001`을 쉼표로 이어 넣고 서버를 다시 띄운다.
+도메인은 API와 웹을 같은 상위 도메인 아래에 둔다(`api.<도메인>`, `admin.<도메인>`). 서버가 리프레시 토큰을 `SameSite=Lax` httpOnly 쿠키로 주고, 로그인 표시 쿠키(`signedIn`)로 페이지를 보호하므로 서로 다른 사이트면 로그인이 되지 않는다.
+
+웹의 origin을 서버의 CORS에 추가한다. `/opt/tail-server/.env`의 `CORS_ALLOWED_ORIGINS`에 `https://<ADMIN_DOMAIN>`을 넣고 서버를 다시 띄운다. 쿠키를 쓰므로 `*`는 안 된다.
 
 ```bash
-sudo -u deploy nano /opt/tail-server/.env    # CORS_ALLOWED_ORIGINS=기존값,http://<서버 주소>:3001
+sudo -u deploy nano /opt/tail-server/.env    # CORS_ALLOWED_ORIGINS=https://<ADMIN_DOMAIN>
 cd /opt/tail-server && sudo -u deploy env IMAGE_TAG="$(cat current_tag)" docker compose up -d app
 ```
 
@@ -42,11 +44,11 @@ Settings → Secrets and variables → Actions → **Variables** → New reposit
 
 | 이름                           | 값                                                           |
 | ------------------------------ | ------------------------------------------------------------ |
-| `NEXT_PUBLIC_API_URL`          | 운영 서버 API 주소. 예: `http://<서버 주소>:8080/api/v1`     |
+| `NEXT_PUBLIC_API_URL`          | 운영 서버 API 주소. 예: `https://<API_DOMAIN>/api/v1`        |
 | `NEXT_PUBLIC_KAKAO_CLIENT_ID`  | 카카오 REST API 키 (서버 `KAKAO_CLIENT_ID`와 같은 값)        |
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | 구글 OAuth 클라이언트 ID (서버 `GOOGLE_CLIENT_ID`와 같은 값) |
 
-카카오 디벨로퍼스와 구글 클라우드 콘솔의 Redirect URI에 `<웹 주소>/login`을 등록한다.
+카카오 디벨로퍼스와 구글 클라우드 콘솔의 Redirect URI에 `https://<ADMIN_DOMAIN>/login`을 등록한다.
 
 ### prod environment
 
@@ -68,7 +70,7 @@ GHCR 로그인은 워크플로의 `GITHUB_TOKEN`으로 하므로 따로 등록�
 ## 3. 첫 배포
 
 1. `develop`을 `main`으로 PR해서 머지한다. CI가 성공하면 Deploy가 자동으로 시작된다.
-2. 로그에 `OK: sha-xxxxxxx 배포 완료`가 나오면 `http://<서버 주소>:3001`에서 확인한다.
+2. 로그에 `OK: sha-xxxxxxx 배포 완료`가 나오면 `https://<ADMIN_DOMAIN>`에서 로그인까지 확인한다.
 
 첫 배포는 `current_tag`가 없어서 실패해도 롤백할 이전 버전이 없다.
 
