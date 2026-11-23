@@ -1,7 +1,15 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
+import { markSignedIn, markSignedOut } from "./session";
+
+// 서버는 X-Client-Type: WEB이면 리프레시 토큰을 응답 본문 대신 httpOnly 쿠키로 주고받는다
+const webRequest = {
+  withCredentials: true,
+  headers: { "X-Client-Type": "WEB" },
+};
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  ...webRequest,
 });
 
 // 로그인 화면 주소. error는 login/page.tsx가 보여 주는 화면 종류
@@ -9,38 +17,32 @@ export type LoginError = "forbidden" | "failed" | "expired";
 export const loginHref = (error?: LoginError) =>
   error ? `/login?error=${error}` : "/login";
 
-type Tokens = { accessToken: string; refreshToken: string };
-const ACCESS = "accessToken";
-const REFRESH = "refreshToken";
-
-// shortcut: 토큰을 localStorage에 둬서 XSS에 노출되고 서버에서 로그인 여부를 볼 수 없다. 서버가 httpOnly 쿠키를 주면 옮긴다
+// 액세스 토큰은 메모리에만 둔다. 새로고침으로 사라지면 첫 401에서 쿠키로 재발급해 복구한다.
+// 리프레시 토큰은 서버가 준 httpOnly 쿠키라 JS는 보지 못한다
 export const tokens = {
-  get access() {
-    return localStorage.getItem(ACCESS);
-  },
-  get refresh() {
-    return localStorage.getItem(REFRESH);
-  },
-  save({ accessToken, refreshToken }: Tokens) {
-    localStorage.setItem(ACCESS, accessToken);
-    localStorage.setItem(REFRESH, refreshToken);
-  },
-  clear() {
-    localStorage.removeItem(ACCESS);
-    localStorage.removeItem(REFRESH);
-  },
+  access: null as string | null,
 };
 
+export function signIn(accessToken: string) {
+  tokens.access = accessToken;
+  markSignedIn();
+}
+
+export function signOut() {
+  tokens.access = null;
+  markSignedOut();
+}
+
 api.interceptors.request.use((config) => {
-  const token = tokens.access;
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (tokens.access) config.headers.Authorization = `Bearer ${tokens.access}`;
   return config;
 });
 
-// 소셜 로그인 실패(OAUTH_FAILED)도 401이고, 로그아웃은 실패해도 로그인 화면으로 가면 되므로 재발급하지 않는다
-const noReissue = ["/auth/oauth/callback", "/auth/logout"];
+// 소셜 로그인 실패(OAUTH_FAILED)도 401이라 재발급하지 않는다. 로그아웃은 인증이 필요해서,
+// 액세스 토큰이 만료됐으면 서버 요구대로 재발급한 뒤 다시 보낸다
+const noReissue = ["/auth/oauth/callback"];
 
-// 동시에 401이 여러 개 나도 재발급은 한 번만 한다 (쓴 리프레시 토큰은 서버가 지운다)
+// 동시에 401이 여러 개 나도 재발급은 한 번만 한다 (쓴 리프레시 토큰은 서버가 바꾼다)
 let reissuing: Promise<void> | null = null;
 
 api.interceptors.response.use(undefined, async (error) => {
@@ -53,26 +55,23 @@ api.interceptors.response.use(undefined, async (error) => {
   ) {
     throw error;
   }
-  const used = tokens.refresh;
-  if (!used) return leave(loginHref());
-
   config.retried = true;
   reissuing ??= axios
-    .put(`${api.defaults.baseURL}/auth/reissue`, { refreshToken: used })
-    .then((res) => tokens.save(res.data.data))
+    .put(`${api.defaults.baseURL}/auth/reissue`, undefined, webRequest)
+    .then((res) => signIn(res.data.data.accessToken))
     .finally(() => (reissuing = null));
   try {
     await reissuing;
   } catch (reissueError) {
-    // 다른 탭이 먼저 재발급했으면 그 토큰으로 다시 보낸다
-    if (tokens.refresh && tokens.refresh !== used) return api(config);
-    // 서버·네트워크 장애는 만료가 아니므로 토큰을 남긴다
+    // 서버·네트워크 장애는 만료가 아니므로 원래 에러를 던진다
     if (
       !axios.isAxiosError(reissueError) ||
       reissueError.response?.status !== 401
     )
       throw error;
-    tokens.clear();
+    signOut();
+    // 로그아웃은 만료 화면 없이 호출한 쪽이 마무리한다 (사용자가 직접 나간 것이고, 관리자 아님 안내를 덮지 않는다)
+    if (config.url === "/auth/logout") throw error;
     return leave(loginHref("expired"));
   }
   return api(config);

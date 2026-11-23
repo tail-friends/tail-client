@@ -1,4 +1,4 @@
-import { api, loginHref, tokens } from "@/lib/api";
+import { api, loginHref, signIn, signOut } from "@/lib/api";
 
 export type Me = { id: number; nickname: string; role: "KEEPER" | "ADMIN" };
 
@@ -69,7 +69,7 @@ export async function finishLogin(code: string | undefined, state: string) {
     code,
     redirectUri: redirectUri(),
   });
-  tokens.save(data.data);
+  signIn(data.data.accessToken);
 
   let me: Me;
   try {
@@ -91,8 +91,6 @@ export async function getMe() {
 
 // 서버 폐기에 실패해도 이 브라우저에서는 로그아웃한다
 export async function logout() {
-  await api
-    .post("/auth/logout", { refreshToken: tokens.refresh })
-    .catch(() => {});
-  tokens.clear();
+  await api.post("/auth/logout").catch(() => {});
+  signOut();
 }
